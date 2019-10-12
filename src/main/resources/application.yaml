@@ -1,0 +1,22 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:./music-data
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+
+music:
+  dir: D:\Music\Server
+
+server:
+  upload:
+    max-file-size-mb: 150
+    max-request-size-mb: 150
