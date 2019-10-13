@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import server.models.Album;
-import server.models.Song;
 import server.models.User;
 import server.services.AlbumService;
 import server.services.SongService;
@@ -27,11 +26,10 @@ public class PrepareController {
         StringBuilder sb = new StringBuilder();
 
         User adminUser = new User();
-        adminUser.setId("admin");
         adminUser.setName("Руслан");
         adminUser.setLastname("Тумасов");
-        adminUser.setLogin("Rusnura");
-        adminUser.setPassword("temppass101");
+        adminUser.setUsername("admin");
+        adminUser.setPassword("$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6");
         userService.save(adminUser);
 
         Album firstAlbum = new Album();

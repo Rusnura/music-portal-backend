@@ -17,6 +17,8 @@ music:
   dir: D:\Music\Server
 
 server:
+  jwt:
+    secret: givfbvw_4OWjXzWsmhAoqj_h8p5tTRnPE0MEqPrDuSoCx1RSZNoBFKT26g15hg4diFR-yALou-OCGgChNgsE7X_kgn_8ViKhMuQtd4O_TSWOAFKH57S81RP5Hwd58jErMPURwKCDKqDMl8NiXa_e3wxFoi17ejm1frj590jL22gk1AhGwpoOpNmZrq0SDtRKN_G2LU33nkG_BI5ooY5BYTuPmWS1u4qDIxRKNDMN_QtmJnPVz9BBNY5I1TfL52acBKtzgvF64kOFnTQyWuEauTj4J9Q5YJjJtRmagCpHxhDlxKdjC9lc0jalwZzUzQwfDA_sx03OEY8Usb4a3KX1AQ
   upload:
     max-file-size-mb: 150
     max-request-size-mb: 150

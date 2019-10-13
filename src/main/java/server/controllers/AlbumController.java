@@ -35,7 +35,7 @@ public class AlbumController {
     @GetMapping("/api/user/{userId}/albums") // R - user albums
     public Page<Album> getAlbums(@PageableDefault(size = Integer.MAX_VALUE, sort = {"createDate"}, direction = Sort.Direction.DESC) Pageable pageable,
                                  @PathVariable String userId) {
-        return albumService.findByUser(userService.findById(userId), pageable);
+        return albumService.findByUser(userService.findByUsername(userId), pageable);
     }
 
     @PutMapping("/api/album/{id}") // U
