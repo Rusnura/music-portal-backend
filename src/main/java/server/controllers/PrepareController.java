@@ -32,13 +32,13 @@ public class PrepareController {
         adminUser.setPassword("$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6");
         userService.save(adminUser);
 
-        Album firstAlbum = new Album();
-        firstAlbum.setId("admin");
-        firstAlbum.setName("First");
-        firstAlbum.setDescription("Мой первый альбом!");
-        firstAlbum.setUser(adminUser);
-        albumService.save(firstAlbum);
-        sb.append(firstAlbum.getName()).append(" был добавлен!").append("\n");
+//        Album firstAlbum = new Album();
+//        firstAlbum.setId("admin");
+//        firstAlbum.setName("First");
+//        firstAlbum.setDescription("Мой первый альбом!");
+//        firstAlbum.setUser(adminUser);
+//        albumService.save(firstAlbum);
+//        sb.append(firstAlbum.getName()).append(" был добавлен!").append("\n");
 
 //        Album nostalgyAlbum = new Album();
 //        nostalgyAlbum.setName("Ностальгический");

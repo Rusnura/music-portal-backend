@@ -17,7 +17,11 @@ public class AlbumService extends AbstractService<Album> {
     @Autowired
     private AlbumRepository albumRepo;
 
-    public Page<Album> findByUser(User user, Pageable pageable) {
+    public Album getByIdAndUser(String albumId, User user) {
+        return albumRepo.findByIdAndUser(albumId, user).orElseThrow(() -> new IllegalStateException("Album with ID='" + albumId + "' not found!"));
+    }
+
+    public Page<Album> getByUser(User user, Pageable pageable) {
         return albumRepo.findAllByUser(user, pageable);
     }
 

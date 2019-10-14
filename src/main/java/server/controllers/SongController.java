@@ -9,9 +9,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import server.models.Song;
+import server.models.User;
 import server.services.AlbumService;
 import server.services.SongService;
 import javax.validation.Valid;
@@ -36,10 +38,12 @@ public class SongController {
 
     @PostMapping(value = "/api/album/{albumId}/song", consumes = "multipart/form-data") // C
     public ResponseEntity<Song> create(@RequestPart @Valid @NotNull @NotBlank MultipartFile audio,
-                                           @PathVariable String albumId,
-                                           @RequestParam(required = false) String title,
-                                           @RequestParam(required = false) String artist) throws IOException, IllegalStateException {
-        return ResponseEntity.ok(songService.save(audio, albumService.findById(albumId), title, artist));
+                                       @PathVariable String albumId,
+                                       @RequestParam(required = false) String title,
+                                       @RequestParam(required = false) String artist,
+                                       Authentication authentication) throws IOException, IllegalStateException {
+        return ResponseEntity.ok(songService.save(audio,
+                albumService.getByIdAndUser(albumId, (User)authentication.getPrincipal()), title, artist));
     }
 
     @GetMapping("/api/album/{albumId}/song/{id}") // R
@@ -71,16 +75,17 @@ public class SongController {
     }
 
     @PutMapping(value = "/api/album/{albumId}/song/{id}") // U
-    public ResponseEntity<Song> update(@PathVariable String albumId, @PathVariable String id, @RequestBody Song song) {
-        Song editingSong = songService.get(albumService.findById(albumId), id);
+    public ResponseEntity<Song> update(@PathVariable String albumId, @PathVariable String id, @RequestBody Song song,
+                                       Authentication authentication) {
+        Song editingSong = songService.get(albumService.getByIdAndUser(albumId, (User)authentication.getPrincipal()), id);
         editingSong.setTitle(song.getTitle());
         editingSong.setArtist(song.getArtist());
         return ResponseEntity.ok(songService.save(editingSong));
     }
 
     @DeleteMapping(value = "/api/album/{albumId}/song/{id}") // D
-    public ResponseEntity<?> delete(@PathVariable String albumId, @PathVariable String id) {
-        songService.delete(songService.get(albumService.findById(albumId), id));
+    public ResponseEntity<?> delete(@PathVariable String albumId, @PathVariable String id, Authentication authentication) {
+        songService.delete(songService.get(albumService.getByIdAndUser(albumId, (User)authentication.getPrincipal()), id));
         return ResponseEntity.ok().build();
     }
 }
