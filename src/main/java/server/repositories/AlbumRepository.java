@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface AlbumRepository extends JpaRepository<Album, String> {
     Optional<Album> findByIdAndUser(String id, User user);
     Page<Album> findAllByUser(User user, Pageable pageable);
+    Page<Album> findAllByUserAndInternal(User user, boolean isPublic, Pageable pageable);
 }

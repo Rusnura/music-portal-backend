@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import server.helpers.JwtHelper;
 import server.services.DBUserDetailService;
@@ -31,6 +32,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
+            try {
+                username = jwtHelper.getUsernameFromToken(jwtToken);
+            } catch (IllegalArgumentException e) {
+                System.err.println("Unable to get JWT Token.");
+            } catch (ExpiredJwtException e) {
+                System.err.println("JWT Token has expired.");
+            }
+        } else if (!StringUtils.isEmpty(request.getParameter("auth"))) { // TODO: REMOVE THIS (FOR DEBUG ONLY)
+            jwtToken = request.getParameter("auth");
             try {
                 username = jwtHelper.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {

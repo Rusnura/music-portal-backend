@@ -17,12 +17,32 @@ public class AlbumService extends AbstractService<Album> {
     @Autowired
     private AlbumRepository albumRepo;
 
+    public Album get(String albumId) {
+        return albumRepo.findById(albumId).orElseThrow(() -> new IllegalStateException("Album with ID='" + albumId + "' not found!"));
+    }
+
+    public Album checkAccessAndGet(String albumId, User user) throws IllegalStateException {
+        Album album = get(albumId);
+        if (!album.isInternal()) {
+            return album;
+        }
+
+        if (album.getUser().equals(user)) {
+            return album;
+        }
+        throw new IllegalStateException("Album with ID='" + albumId + "' not found!");
+    }
+
     public Album getByIdAndUser(String albumId, User user) {
         return albumRepo.findByIdAndUser(albumId, user).orElseThrow(() -> new IllegalStateException("Album with ID='" + albumId + "' not found!"));
     }
 
     public Page<Album> getByUser(User user, Pageable pageable) {
         return albumRepo.findAllByUser(user, pageable);
+    }
+
+    public Page<Album> getByUser(User user, boolean isPrivate, Pageable pageable) {
+        return albumRepo.findAllByUserAndInternal(user, isPrivate, pageable);
     }
 
     public Album save(Album album) throws IllegalStateException {

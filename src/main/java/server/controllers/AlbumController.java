@@ -32,13 +32,16 @@ public class AlbumController {
 
     @GetMapping("/api/album/{id}") // R
     public ResponseEntity<?> get(@PathVariable String id, Authentication authentication) {
-        return ResponseEntity.ok(albumService.findById(id));
+        return ResponseEntity.ok(albumService.checkAccessAndGet(id, (User)authentication.getPrincipal()));
     }
 
-    @GetMapping("/api/user/{userId}/albums") // R - user albums
+    @GetMapping("/api/user/{username}/albums") // R - user albums
     public Page<Album> getAlbums(@PageableDefault(size = Integer.MAX_VALUE, sort = {"createDate"}, direction = Sort.Direction.DESC) Pageable pageable,
-                                 @PathVariable String userId) {
-        return albumService.getByUser(userService.findByUsername(userId), pageable);
+                                 @PathVariable String username, Authentication authentication) {
+        if (username.equals(((User)authentication.getPrincipal()).getUsername())) {
+            return albumService.getByUser(userService.findByUsername(username), pageable);
+        }
+        return albumService.getByUser(userService.findByUsername(username), false, pageable);
     }
 
     @PutMapping("/api/album/{id}") // U

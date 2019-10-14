@@ -47,13 +47,15 @@ public class SongController {
     }
 
     @GetMapping("/api/album/{albumId}/song/{id}") // R
-    public ResponseEntity<Song> get(@PathVariable String albumId, @PathVariable String id) {
-        return ResponseEntity.ok(songService.get(albumService.findById(albumId), id));
+    public ResponseEntity<Song> get(@PathVariable String albumId, @PathVariable String id, Authentication authentication) {
+        return ResponseEntity.ok(
+                songService.get(albumService.checkAccessAndGet(albumId, (User)authentication.getPrincipal()), id)
+        );
     }
 
     @GetMapping(value = "/api/album/{albumId}/song/{id}/mp3") // R - mp3
-    public ResponseEntity<?> getFile(@PathVariable String albumId, @PathVariable String id) throws IOException {
-        Song requestingSong = songService.get(albumService.findById(albumId), id);
+    public ResponseEntity<?> getFile(@PathVariable String albumId, @PathVariable String id, Authentication authentication) throws IOException {
+        Song requestingSong = songService.get(albumService.checkAccessAndGet(albumId, (User)authentication.getPrincipal()), id);
         File file = new File(requestingSong.getPath());
         if (file.exists()) {
             Path mp3FilePath = Paths.get(file.getAbsolutePath());
@@ -70,8 +72,8 @@ public class SongController {
 
     @GetMapping("/api/album/{albumId}/songs") // R - album
     public Page<Song> getAlbumSongs(@PageableDefault(size = Integer.MAX_VALUE, sort = {"uploadDate"}, direction = Sort.Direction.DESC) Pageable pageable,
-                                    @PathVariable String albumId) {
-        return songService.findByAlbum(albumService.findById(albumId), pageable);
+                                    @PathVariable String albumId, Authentication authentication) {
+        return songService.findByAlbum(albumService.checkAccessAndGet(albumId, (User)authentication.getPrincipal()), pageable);
     }
 
     @PutMapping(value = "/api/album/{albumId}/song/{id}") // U

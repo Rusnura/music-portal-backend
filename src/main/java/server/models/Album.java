@@ -15,6 +15,7 @@ public class Album extends AbstractEntity {
     @Lob
     private String description;
     private Date createDate = new Date();
+    private boolean internal = true;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
@@ -49,6 +50,14 @@ public class Album extends AbstractEntity {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public boolean isInternal() {
+        return internal;
+    }
+
+    public void setInternal(boolean isPrivateAlbum) {
+        this.internal = isPrivateAlbum;
     }
 
     public User getUser() {
