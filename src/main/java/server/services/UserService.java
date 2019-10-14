@@ -10,6 +10,10 @@ public class UserService extends AbstractService<User> {
     @Autowired
     private UserRepository userRepo;
 
+    public boolean isExistsByUsername(String username) {
+        return userRepo.existsByUsername(username);
+    }
+
     public User findByUsername(String username) {
         return userRepo.findByUsername(username).orElseThrow(() -> new IllegalStateException("User with username ='" + username + "' not found!"));
     }

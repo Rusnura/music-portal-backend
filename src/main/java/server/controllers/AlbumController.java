@@ -46,7 +46,7 @@ public class AlbumController {
         Album editingAlbum = albumService.getByIdAndUser(id, (User)authentication.getPrincipal());
         editingAlbum.setName(album.getName());
         editingAlbum.setDescription(album.getDescription());
-        return ResponseEntity.ok(albumService.save(album));
+        return ResponseEntity.ok(albumService.save(editingAlbum));
     }
 
     @DeleteMapping(value = "/api/album/{id}") // D

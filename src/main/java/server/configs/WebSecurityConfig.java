@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                    .antMatchers("/prepare", "/api/authenticate").permitAll()
+                    .antMatchers("/prepare", "/api/authenticate", "/api/register").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .exceptionHandling().authenticationEntryPoint((req, res, ex) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED))
