@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import server.exceptions.ResourceNotFoundException;
 import server.models.AbstractEntity;
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,7 +24,7 @@ public abstract class AbstractService<T extends AbstractEntity> {
     }
 
     public T findById(String id) {
-        return repository.findById(id).orElseThrow(() -> new IllegalStateException("Object with ID='" + id + "' not found!"));
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Object with ID='" + id + "' not found!"));
     }
 
     public T save(T entity) {

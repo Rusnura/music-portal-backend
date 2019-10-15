@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import server.exceptions.ResourceNotFoundException;
 import server.models.Album;
 import server.models.Song;
 import server.repositories.SongRepository;
@@ -90,7 +91,7 @@ public class SongService extends AbstractService<Song> {
     }
 
     public Song get(Album album, String songId) {
-        return songRepo.findByAlbumAndId(album, songId).orElseThrow(() -> new IllegalStateException("Song with ID='" + songId + "' not found!"));
+        return songRepo.findByAlbumAndId(album, songId).orElseThrow(() -> new ResourceNotFoundException("Song with ID='" + songId + "' not found!"));
     }
 
     public void delete(Song song) {

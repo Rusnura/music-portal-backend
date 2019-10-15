@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import server.models.Song;
-import server.models.User;
 import server.services.AlbumService;
 import server.services.SongService;
 import javax.validation.Valid;
@@ -43,19 +42,19 @@ public class SongController {
                                        @RequestParam(required = false) String artist,
                                        Authentication authentication) throws IOException, IllegalStateException {
         return ResponseEntity.ok(songService.save(audio,
-                albumService.getByIdAndUser(albumId, (User)authentication.getPrincipal()), title, artist));
+                albumService.getByIdAndUser(albumId, authentication.getName()), title, artist));
     }
 
     @GetMapping("/api/album/{albumId}/song/{id}") // R
     public ResponseEntity<Song> get(@PathVariable String albumId, @PathVariable String id, Authentication authentication) {
         return ResponseEntity.ok(
-                songService.get(albumService.checkAccessAndGet(albumId, (User)authentication.getPrincipal()), id)
+                songService.get(albumService.checkAccessAndGet(albumId, authentication.getName()), id)
         );
     }
 
     @GetMapping(value = "/api/album/{albumId}/song/{id}/mp3") // R - mp3
     public ResponseEntity<?> getFile(@PathVariable String albumId, @PathVariable String id, Authentication authentication) throws IOException {
-        Song requestingSong = songService.get(albumService.checkAccessAndGet(albumId, (User)authentication.getPrincipal()), id);
+        Song requestingSong = songService.get(albumService.checkAccessAndGet(albumId, authentication.getName()), id);
         File file = new File(requestingSong.getPath());
         if (file.exists()) {
             Path mp3FilePath = Paths.get(file.getAbsolutePath());
@@ -73,13 +72,13 @@ public class SongController {
     @GetMapping("/api/album/{albumId}/songs") // R - album
     public Page<Song> getAlbumSongs(@PageableDefault(size = Integer.MAX_VALUE, sort = {"uploadDate"}, direction = Sort.Direction.DESC) Pageable pageable,
                                     @PathVariable String albumId, Authentication authentication) {
-        return songService.findByAlbum(albumService.checkAccessAndGet(albumId, (User)authentication.getPrincipal()), pageable);
+        return songService.findByAlbum(albumService.checkAccessAndGet(albumId, authentication.getName()), pageable);
     }
 
     @PutMapping(value = "/api/album/{albumId}/song/{id}") // U
     public ResponseEntity<Song> update(@PathVariable String albumId, @PathVariable String id, @RequestBody Song song,
                                        Authentication authentication) {
-        Song editingSong = songService.get(albumService.getByIdAndUser(albumId, (User)authentication.getPrincipal()), id);
+        Song editingSong = songService.get(albumService.getByIdAndUser(albumId, authentication.getName()), id);
         editingSong.setTitle(song.getTitle());
         editingSong.setArtist(song.getArtist());
         return ResponseEntity.ok(songService.save(editingSong));
@@ -87,7 +86,7 @@ public class SongController {
 
     @DeleteMapping(value = "/api/album/{albumId}/song/{id}") // D
     public ResponseEntity<?> delete(@PathVariable String albumId, @PathVariable String id, Authentication authentication) {
-        songService.delete(songService.get(albumService.getByIdAndUser(albumId, (User)authentication.getPrincipal()), id));
+        songService.delete(songService.get(albumService.getByIdAndUser(albumId, authentication.getName()), id));
         return ResponseEntity.ok().build();
     }
 }

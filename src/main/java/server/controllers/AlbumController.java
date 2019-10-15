@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import server.models.Album;
-import server.models.User;
 import server.services.AlbumService;
 import server.services.UserService;
 import java.util.logging.Logger;
@@ -26,27 +25,27 @@ public class AlbumController {
 
     @PostMapping("/api/album") // C
     public ResponseEntity<Album> create(@RequestBody Album album, Authentication authentication) {
-        album.setUser((User)authentication.getPrincipal());
+        album.setUser(userService.findByUsername(authentication.getName()));
         return ResponseEntity.ok(albumService.save(album));
     }
 
     @GetMapping("/api/album/{id}") // R
     public ResponseEntity<?> get(@PathVariable String id, Authentication authentication) {
-        return ResponseEntity.ok(albumService.checkAccessAndGet(id, (User)authentication.getPrincipal()));
+        return ResponseEntity.ok(albumService.checkAccessAndGet(id, authentication.getName()));
     }
 
     @GetMapping("/api/user/{username}/albums") // R - user albums
     public Page<Album> getAlbums(@PageableDefault(size = Integer.MAX_VALUE, sort = {"createDate"}, direction = Sort.Direction.DESC) Pageable pageable,
                                  @PathVariable String username, Authentication authentication) {
-        if (username.equals(((User)authentication.getPrincipal()).getUsername())) {
-            return albumService.getByUser(userService.findByUsername(username), pageable);
+        if (username.equals(authentication.getName())) {
+            return albumService.getByUser(authentication.getName(), pageable);
         }
-        return albumService.getByUser(userService.findByUsername(username), false, pageable);
+        return albumService.getByUser(authentication.getName(), false, pageable);
     }
 
     @PutMapping("/api/album/{id}") // U
     public ResponseEntity<?> update(@PathVariable String id, @RequestBody Album album, Authentication authentication) {
-        Album editingAlbum = albumService.getByIdAndUser(id, (User)authentication.getPrincipal());
+        Album editingAlbum = albumService.getByIdAndUser(id, authentication.getName());
         editingAlbum.setName(album.getName());
         editingAlbum.setDescription(album.getDescription());
         return ResponseEntity.ok(albumService.save(editingAlbum));
@@ -54,7 +53,7 @@ public class AlbumController {
 
     @DeleteMapping(value = "/api/album/{id}") // D
     public ResponseEntity<?> delete(@PathVariable String id, Authentication authentication) {
-        albumService.delete(albumService.getByIdAndUser(id, (User)authentication.getPrincipal()));
+        albumService.delete(albumService.getByIdAndUser(id, authentication.getName()));
         return ResponseEntity.ok().build();
     }
 }

@@ -2,6 +2,7 @@ package server.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import server.exceptions.ResourceNotFoundException;
 import server.models.User;
 import server.repositories.UserRepository;
 
@@ -15,6 +16,6 @@ public class UserService extends AbstractService<User> {
     }
 
     public User findByUsername(String username) {
-        return userRepo.findByUsername(username).orElseThrow(() -> new IllegalStateException("User with username ='" + username + "' not found!"));
+        return userRepo.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User with username ='" + username + "' not found!"));
     }
 }
