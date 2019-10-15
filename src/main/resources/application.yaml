@@ -22,3 +22,16 @@ server:
   upload:
     max-file-size-mb: 150
     max-request-size-mb: 150
+
+---
+spring:
+  profiles: test
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:music-portal-test
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: ${RDM_DATABASE_DDL_AUTO:create}
