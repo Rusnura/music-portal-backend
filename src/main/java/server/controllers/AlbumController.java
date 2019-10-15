@@ -40,7 +40,7 @@ public class AlbumController {
         if (username.equals(authentication.getName())) {
             return albumService.getByUser(authentication.getName(), pageable);
         }
-        return albumService.getByUser(authentication.getName(), false, pageable);
+        return albumService.getByUser(username, false, pageable);
     }
 
     @PutMapping("/api/album/{id}") // U
