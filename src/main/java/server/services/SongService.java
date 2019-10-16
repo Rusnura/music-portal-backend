@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import server.exceptions.IncorrectAudioException;
 import server.exceptions.ResourceNotFoundException;
 import server.models.Album;
 import server.models.Song;
@@ -45,7 +46,7 @@ public class SongService extends AbstractService<Song> {
         File uploadedFile;
         if (!audioFile.isEmpty() && audioFile.getOriginalFilename() != null) {
             if (!MP3_CONTENT_TYPE.equals(audioFile.getContentType())) {
-                throw new IOException("Please, upload correct MP3 file!");
+                throw new IncorrectAudioException("Please, upload correct MP3 file!");
             }
 
             if (audioFilesDirectory.exists() && audioFilesDirectory.canWrite()) {
@@ -62,7 +63,7 @@ public class SongService extends AbstractService<Song> {
                         bos.close();
                     } catch (Exception e) {
                         LOGGER.log(Level.WARNING, "Cannot upload file: " + e.getMessage() + "!", e);
-                        throw new IOException("Can't upload your mp3 file!");
+                        throw new IncorrectAudioException("Can't upload your mp3 file!");
                     }
                 } else {
                     LOGGER.log(Level.WARNING, "Album directory isn't writable! Album directory = " + albumDirectory.getPath() +
@@ -75,10 +76,10 @@ public class SongService extends AbstractService<Song> {
                         ", exists=" + audioFilesDirectory.exists() +
                         ", canRead=" + audioFilesDirectory.canRead() +
                         ", canWrite=" + audioFilesDirectory.canWrite());
-                throw new IOException("User data directory isn't writable");
+                throw new IncorrectAudioException("User data directory isn't writable");
             }
         } else {
-            throw new IllegalStateException("Uploading file is empty!");
+            throw new IncorrectAudioException("Uploading file is empty!");
         }
 
         Song song = new Song();

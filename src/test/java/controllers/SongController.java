@@ -25,15 +25,12 @@ import server.repositories.AlbumRepository;
 import server.repositories.SongRepository;
 import server.repositories.UserRepository;
 import server.services.SongService;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.UUID;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -50,6 +47,8 @@ public class SongController {
   private Principal principal2 = new UsernamePasswordAuthenticationToken("rtu2", "rtuPass2");
   private Principal nonExistPrincipal = new UsernamePasswordAuthenticationToken("non-existing", "p");
   private File mp3correctFile = new File(SongController.class.getResource("/mp3/MP3_700KB.mp3").getFile());
+  private File mp3incorrectFile = new File(SongController.class.getResource("/mp3/wrong.mp3").getFile());
+  private File mp3emptyFile = new File(SongController.class.getResource("/mp3/empty.mp3").getFile());
   private static File tempFolder = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
 
   @Autowired
@@ -182,6 +181,34 @@ public class SongController {
             .param("artist", "art2")
             .param("title", "song2"))
             .andExpect(status().isBadRequest());
+
+    // Try to upload a wrong file
+    MockMultipartFile incorrectMp3File = new MockMultipartFile("audio", "wrong.mp3", "image/jpg", new FileInputStream(mp3incorrectFile));
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album1.getId())
+            .file(incorrectMp3File)
+            .principal(principal1)
+            .param("artist", "art2")
+            .param("title", "song2"))
+            .andExpect(status().isNotAcceptable());
+
+    // Try to upload a empty file (with correct headers)
+    MockMultipartFile emptyMp3File = new MockMultipartFile("audio", "empty.mp3", "audio/mp3", new FileInputStream(mp3emptyFile));
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album1.getId())
+            .file(emptyMp3File)
+            .principal(principal1)
+            .param("artist", "art2")
+            .param("title", "song2"))
+            .andExpect(status().isNotAcceptable());
+  }
+
+  // @GetMapping("/api/album/{albumId}/song/{id}") // R
+  // @GetMapping(value = "/api/album/{albumId}/song/{id}/mp3") // R - mp3
+  // @GetMapping("/api/album/{albumId}/songs") // R - album
+  // @PutMapping(value = "/api/album/{albumId}/song/{id}") // U
+  // @DeleteMapping(value = "/api/album/{albumId}/song/{id}") // D
+  @Test
+  public void get() {
+    // TODO: Release get test
   }
 
   @After
