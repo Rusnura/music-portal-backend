@@ -1,7 +1,8 @@
 package server.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -14,16 +15,18 @@ public class Album extends AbstractEntity {
     private String name;
     @Lob
     private String description;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date createDate = new Date();
     private boolean internal = true;
 
     @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @JsonIgnore
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Song> songs = new LinkedList<>();
 
     public Album() {}

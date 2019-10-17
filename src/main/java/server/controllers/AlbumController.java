@@ -7,8 +7,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import server.models.Album;
+import server.models.User;
 import server.services.AlbumService;
 import server.services.UserService;
 import java.util.logging.Logger;
@@ -25,8 +27,16 @@ public class AlbumController {
 
     @PostMapping("/api/album") // C
     public ResponseEntity<Album> create(@RequestBody Album album, Authentication authentication) {
-        album.setUser(userService.findByUsername(authentication.getName()));
-        return ResponseEntity.ok(albumService.save(album));
+        User user = userService.findByUsername(authentication.getName());
+        if (StringUtils.isEmpty(album.getName())) {
+            throw new IllegalStateException("Album name is empty");
+        }
+        Album newAlbum = new Album();
+        newAlbum.setName(album.getName());
+        newAlbum.setDescription(album.getDescription());
+        newAlbum.setUser(user);
+        newAlbum.setInternal(album.isInternal());
+        return ResponseEntity.ok(albumService.save(newAlbum));
     }
 
     @GetMapping("/api/album/{id}") // R
@@ -48,6 +58,7 @@ public class AlbumController {
         Album editingAlbum = albumService.getByIdAndUser(id, authentication.getName());
         editingAlbum.setName(album.getName());
         editingAlbum.setDescription(album.getDescription());
+        editingAlbum.setInternal(album.isInternal());
         return ResponseEntity.ok(albumService.save(editingAlbum));
     }
 

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import server.exceptions.ResourceNotFoundException;
 import server.models.Album;
 import server.repositories.AlbumRepository;
@@ -46,9 +45,6 @@ public class AlbumService extends AbstractService<Album> {
     }
 
     public Album save(Album album) throws IllegalStateException {
-        if (StringUtils.isEmpty(album.getName())) {
-            throw new IllegalStateException("Album name is empty");
-        }
         return super.save(album);
     }
 
