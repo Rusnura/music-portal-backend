@@ -13,7 +13,8 @@ import java.util.function.Function;
 
 @Component
 public class JwtHelper {
-    public static final long JWT_TOKEN_VALIDITY = 5*60*60;
+    @Value("${server.jwt.validity-mins}")
+    private String jwtTokenValidity;
     @Value("${server.jwt.secret}")
     private String secret;
 
@@ -39,7 +40,7 @@ public class JwtHelper {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + Long.parseUnsignedLong(jwtTokenValidity) * 60 * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
@@ -56,5 +57,4 @@ public class JwtHelper {
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
-
 }
