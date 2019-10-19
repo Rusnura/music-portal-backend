@@ -1,6 +1,5 @@
 package server.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
@@ -20,9 +19,8 @@ public class Album extends AbstractEntity {
     private boolean internal = true;
 
     @NotNull
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonBackReference
     private User user;
 
     @JsonIgnore
