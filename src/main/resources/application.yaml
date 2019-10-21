@@ -6,12 +6,12 @@ spring:
   datasource:
     driverClassName: org.h2.Driver
     url: jdbc:h2:./music-data
-    username: sa
+    username: ruslan
     password:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
 
 music:
   dir: D:\Music\Server
@@ -35,4 +35,4 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: ${RDM_DATABASE_DDL_AUTO:create}
+      ddl-auto: create
