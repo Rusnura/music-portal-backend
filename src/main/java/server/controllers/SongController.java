@@ -61,7 +61,7 @@ public class SongController {
             ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(mp3FilePath));
 
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + albumId + "-" + id +".mp3")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + requestingSong.getArtist() + "-" + requestingSong.getTitle() +".mp3")
                     .contentLength(file.length())
                     .contentType(MediaType.parseMediaType(SongService.MP3_CONTENT_TYPE))
                     .body(resource);
