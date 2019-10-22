@@ -39,7 +39,7 @@ public class SongController {
     @PostMapping(value = "/api/album/{albumId}/song", consumes = "multipart/form-data") // C
     public ResponseEntity<Song> create(@RequestPart @Valid @NotNull @NotBlank MultipartFile audio,
                                        @PathVariable String albumId,
-                                       @RequestPart("body") @Valid Song song, Authentication authentication) throws IOException, IllegalStateException {
+                                       @RequestPart("body") Song song, Authentication authentication) throws IOException, IllegalStateException {
         Album album = albumService.getByIdAndUser(albumId, authentication.getName());
         return ResponseEntity.ok(songService.save(audio, album, song.getTitle(), song.getArtist()));
     }
