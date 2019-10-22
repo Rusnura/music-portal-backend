@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import server.models.Album;
 import server.models.Song;
 import server.services.AlbumService;
 import server.services.SongService;
@@ -38,11 +39,9 @@ public class SongController {
     @PostMapping(value = "/api/album/{albumId}/song", consumes = "multipart/form-data") // C
     public ResponseEntity<Song> create(@RequestPart @Valid @NotNull @NotBlank MultipartFile audio,
                                        @PathVariable String albumId,
-                                       @RequestParam(required = false) String title,
-                                       @RequestParam(required = false) String artist,
-                                       Authentication authentication) throws IOException, IllegalStateException {
-        return ResponseEntity.ok(songService.save(audio,
-                albumService.getByIdAndUser(albumId, authentication.getName()), title, artist));
+                                       @RequestPart("body") @Valid Song song, Authentication authentication) throws IOException, IllegalStateException {
+        Album album = albumService.getByIdAndUser(albumId, authentication.getName());
+        return ResponseEntity.ok(songService.save(audio, album, song.getTitle(), song.getArtist()));
     }
 
     @GetMapping("/api/album/{albumId}/song/{id}") // R
