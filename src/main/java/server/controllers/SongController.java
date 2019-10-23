@@ -44,6 +44,12 @@ public class SongController {
         return ResponseEntity.ok(songService.save(audio, album, song.getTitle(), song.getArtist()));
     }
 
+    @GetMapping("/api/songs")
+    public Page<Song> getMySongs(@PageableDefault(size = Integer.MAX_VALUE, sort = {"uploadDate"}, direction = Sort.Direction.DESC) Pageable pageable,
+                                 Authentication authentication) {
+        return songService.findByUser(authentication.getName(), pageable);
+    }
+
     @GetMapping("/api/album/{albumId}/song/{id}") // R
     public ResponseEntity<Song> get(@PathVariable String albumId, @PathVariable String id, Authentication authentication) {
         return ResponseEntity.ok(

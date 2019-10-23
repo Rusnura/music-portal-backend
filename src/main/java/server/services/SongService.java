@@ -41,6 +41,10 @@ public class SongService extends AbstractService<Song> {
         return songRepo.findAllByAlbum(album, pageable);
     }
 
+    public Page<Song> findByUser(String username, Pageable pageable) {
+        return songRepo.findAllByUser_Username(username, pageable);
+    }
+
     public Song save(MultipartFile audioFile, Album album, String title, String artist) throws IllegalStateException, IOException {
         // TODO: Need security implementing
         File uploadedFile;
@@ -85,6 +89,7 @@ public class SongService extends AbstractService<Song> {
         Song song = new Song();
         song.setAlbum(album);
         // TODO: Include IDv3 metadata reader
+        song.setUser(album.getUser());
         song.setArtist((StringUtils.isEmpty(artist) ? "Неизвестно": artist));
         song.setTitle((StringUtils.isEmpty(title) ? "Неизвестно": title));
         song.setPath(uploadedFile.getPath());

@@ -1,6 +1,8 @@
 package server.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -13,12 +15,17 @@ import java.util.Date;
 public class Song extends AbstractEntity {
     private String title;
     private String artist;
+    @JsonIgnore
     private String path;
     private Date uploadDate = new Date();
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private Album album;
+    @NotNull
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User user;
 
     public Song() {}
 
@@ -60,5 +67,13 @@ public class Song extends AbstractEntity {
 
     public void setAlbum(Album album) {
         this.album = album;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
