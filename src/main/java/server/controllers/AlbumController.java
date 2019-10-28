@@ -44,6 +44,11 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.checkAccessAndGet(id, authentication.getName()));
     }
 
+    @GetMapping("/api/albums") // R - my albums
+    public Page<Album> getMyAlbums(@PageableDefault(size = Integer.MAX_VALUE, sort = {"createDate"}, direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
+        return albumService.getByUser(authentication.getName(), pageable);
+    }
+
     @GetMapping("/api/user/{username}/albums") // R - user albums
     public Page<Album> getAlbums(@PageableDefault(size = Integer.MAX_VALUE, sort = {"createDate"}, direction = Sort.Direction.DESC) Pageable pageable,
                                  @PathVariable String username, Authentication authentication) {
