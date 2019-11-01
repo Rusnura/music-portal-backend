@@ -141,37 +141,40 @@ public class SongController {
     rtu2Album2 = albumRepo.save(album);
 
     MockMultipartFile mp3File = new MockMultipartFile("audio", "mp3.mp3", "audio/mp3", new FileInputStream(mp3correctFile));
+    Song song = new Song();
+    song.setArtist("art1");
+    song.setTitle("rtu1-album1-song");
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album1.getId())
             .file(mp3File)
-            .principal(principal1)
-            .param("artist", "art1")
-            .param("title", "rtu1-album1-song"))
+            .content(convertObjectToJsonString(song)).contentType("multipart/form-data")
+            .principal(principal1))
             .andExpect(status().isOk()).andReturn();
     rtu1Album1Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
 
-    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album2.getId())
-            .file(mp3File)
-            .principal(principal1)
-            .param("artist", "art2")
-            .param("title", "rtu1-album2-song"))
-            .andExpect(status().isOk()).andReturn();
-    rtu1Album2Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
-
-    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu2Album1.getId())
-            .file(mp3File)
-            .principal(principal2)
-            .param("artist", "art2")
-            .param("title", "rtu2-album1-song"))
-            .andExpect(status().isOk()).andReturn();
-    rtu2Album1Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
-
-    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu2Album2.getId())
-            .file(mp3File)
-            .principal(principal2)
-            .param("artist", "art2")
-            .param("title", "song2"))
-            .andExpect(status().isOk()).andReturn();
-    rtu2Album2Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
+//    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album2.getId())
+//            .file(mp3File)
+//            .principal(principal1)
+//            .content()
+//            .param("artist", "art2")
+//            .param("title", "rtu1-album2-song"))
+//            .andExpect(status().isOk()).andReturn();
+//    rtu1Album2Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
+//
+//    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu2Album1.getId())
+//            .file(mp3File)
+//            .principal(principal2)
+//            .param("artist", "art2")
+//            .param("title", "rtu2-album1-song"))
+//            .andExpect(status().isOk()).andReturn();
+//    rtu2Album1Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
+//
+//    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu2Album2.getId())
+//            .file(mp3File)
+//            .principal(principal2)
+//            .param("artist", "art2")
+//            .param("title", "song2"))
+//            .andExpect(status().isOk()).andReturn();
+//    rtu2Album2Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
   }
 
   @Test
