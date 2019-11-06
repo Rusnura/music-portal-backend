@@ -12,9 +12,12 @@ import java.io.IOException;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class CORSFilter extends OncePerRequestFilter {
+public class CORSFilter implements Filter {
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+        final HttpServletRequest request = (HttpServletRequest) servletRequest;
+        final HttpServletResponse response = (HttpServletResponse) servletResponse;
+
         String method = request.getMethod();
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
@@ -26,7 +29,17 @@ public class CORSFilter extends OncePerRequestFilter {
         if ("OPTIONS".equals(method)) {
             response.setStatus(HttpStatus.OK.value());
         } else {
-            filterChain.doFilter(request, response);
+            chain.doFilter(request, response);
         }
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // NOP
+    }
+
+    @Override
+    public void destroy() {
+        // NOP
     }
 }
