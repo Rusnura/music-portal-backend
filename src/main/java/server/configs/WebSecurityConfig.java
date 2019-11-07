@@ -32,12 +32,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                    .antMatchers("/prepare", "/api/authenticate", "/api/register").permitAll()
+                    .antMatchers("/api/authenticate", "/api/register").permitAll()
                     .anyRequest().authenticated()
                 .and()
-                    .exceptionHandling().authenticationEntryPoint((req, res, ex) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED))
-                .and()
-                    .logout().logoutRequestMatcher(new AntPathRequestMatcher("/api/logout")).permitAll();
+                    .exceptionHandling().authenticationEntryPoint((req, res, ex) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

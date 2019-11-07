@@ -10,9 +10,4 @@ public class Runner extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(Runner.class, args);
     }
-
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(Runner.class);
-    }
 }
