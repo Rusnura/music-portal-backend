@@ -15,19 +15,26 @@ import java.util.Date;
 public class Song extends AbstractEntity {
     private String title;
     private String artist;
+    private Date uploadDate = new Date();
+
     @JsonIgnore
     private String path;
-    private Date uploadDate = new Date();
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private Album album;
+
     @NotNull
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     public Song() {}
+
+    public String getAlbumId() {
+        return album.getId();
+    }
 
     public String getTitle() {
         return title;
