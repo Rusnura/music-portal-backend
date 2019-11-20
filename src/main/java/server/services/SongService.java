@@ -1,5 +1,10 @@
 package server.services;
 
+import com.mpatric.mp3agic.ID3v1;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -88,7 +93,22 @@ public class SongService extends AbstractService<Song> {
 
         Song song = new Song();
         song.setAlbum(album);
-        // TODO: Include IDv3 metadata reader
+        if (StringUtils.isEmpty(artist) || StringUtils.isEmpty(title)) {
+            try {
+                Mp3File mp3file = new Mp3File(uploadedFile);
+                if (mp3file.hasId3v1Tag()) {
+                    ID3v1 id3v1Tag = mp3file.getId3v1Tag();
+                    artist = StringUtils.isEmpty(artist) ? id3v1Tag.getArtist() : artist;
+                    title = StringUtils.isEmpty(title) ? id3v1Tag.getArtist() : artist;
+                } else if (mp3file.hasId3v2Tag()) {
+                    ID3v2 id3v2Tag = mp3file.getId3v2Tag();
+                    artist = StringUtils.isEmpty(artist) ? id3v2Tag.getArtist() : artist;
+                    title = StringUtils.isEmpty(title) ? id3v2Tag.getArtist() : artist;
+                }
+            } catch (UnsupportedTagException | InvalidDataException e) {
+                // TODO: Log it
+            }
+        }
         song.setUser(album.getUser());
         song.setArtist((StringUtils.isEmpty(artist) ? "Неизвестно": artist));
         song.setTitle((StringUtils.isEmpty(title) ? "Неизвестно": title));
