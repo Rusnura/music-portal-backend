@@ -106,7 +106,7 @@ public class SongService extends AbstractService<Song> {
                     title = StringUtils.isEmpty(title) ? id3v2Tag.getArtist() : artist;
                 }
             } catch (UnsupportedTagException | InvalidDataException e) {
-                // TODO: Log it
+                LOGGER.log(Level.WARNING, "Cannot to get mp3 tags! Skipping...");
             }
         }
         song.setUser(album.getUser());
