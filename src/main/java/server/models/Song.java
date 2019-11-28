@@ -23,7 +23,7 @@ public class Song extends AbstractEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
-    private Album album;
+    private Playlist playlist;
 
     @NotNull
     @JsonIgnore
@@ -32,8 +32,8 @@ public class Song extends AbstractEntity {
 
     public Song() {}
 
-    public String getAlbumId() {
-        return album.getId();
+    public String getPlaylistId() {
+        return playlist.getId();
     }
 
     public String getTitle() {
@@ -68,12 +68,12 @@ public class Song extends AbstractEntity {
         this.uploadDate = uploadDate;
     }
 
-    public Album getAlbum() {
-        return album;
+    public Playlist getPlaylist() {
+        return playlist;
     }
 
-    public void setAlbum(Album album) {
-        this.album = album;
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
     }
 
     public User getUser() {

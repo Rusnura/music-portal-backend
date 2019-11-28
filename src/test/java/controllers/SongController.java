@@ -16,10 +16,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import server.Runner;
-import server.models.Album;
+import server.models.Playlist;
 import server.models.Song;
 import server.models.User;
-import server.repositories.AlbumRepository;
+import server.repositories.PlaylistRepository;
 import server.repositories.SongRepository;
 import server.repositories.UserRepository;
 import server.services.SongService;
@@ -45,10 +45,10 @@ public class SongController {
   private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
   private MockMvc mockMvc;
   private User user1, user2;
-  private Album rtu1Album1, rtu1Album2;
-  private Album rtu2Album1, rtu2Album2;
-  private Song rtu1Album1Song, rtu1Album2Song;
-  private Song rtu2Album1Song, rtu2Album2Song;
+  private Playlist rtu1Playlist1, rtu1Playlist2;
+  private Playlist rtu2Playlist1, rtu2Playlist2;
+  private Song rtu1Playlist1Song, rtu1Playlist2Song;
+  private Song rtu2Playlist1Song, rtu2Playlist2Song;
   private Principal principal1 = new UsernamePasswordAuthenticationToken("rtu1", "rtuPass1");
   private Principal principal2 = new UsernamePasswordAuthenticationToken("rtu2", "rtuPass2");
   private Principal nonExistPrincipal = new UsernamePasswordAuthenticationToken("non-existing", "p");
@@ -67,7 +67,7 @@ public class SongController {
   private UserRepository userRepo;
 
   @Autowired
-  private AlbumRepository albumRepo;
+  private PlaylistRepository playlistRepo;
 
   @Autowired
   private SongRepository songRepo;
@@ -112,104 +112,104 @@ public class SongController {
     user2.setLastname("Tum");
     userRepo.save(user2);
 
-    Album album = new Album();
-    album.setName("rtu1 album - public");
-    album.setDescription("rtu1 album - public");
-    album.setUser(user1);
-    album.setInternal(false);
-    rtu1Album1 = albumRepo.save(album);
+    Playlist playlist = new Playlist();
+    playlist.setName("rtu1 playlist - public");
+    playlist.setDescription("rtu1 playlist - public");
+    playlist.setUser(user1);
+    playlist.setInternal(false);
+    rtu1Playlist1 = playlistRepo.save(playlist);
 
-    album = new Album();
-    album.setName("rtu1 album - private");
-    album.setDescription("rtu1 album - private");
-    album.setUser(user1);
-    album.setInternal(true);
-    rtu1Album2 = albumRepo.save(album);
+    playlist = new Playlist();
+    playlist.setName("rtu1 playlist - private");
+    playlist.setDescription("rtu1 playlist - private");
+    playlist.setUser(user1);
+    playlist.setInternal(true);
+    rtu1Playlist2 = playlistRepo.save(playlist);
 
-    album = new Album();
-    album.setName("rtu2 album - public");
-    album.setDescription("rtu2 album - public");
-    album.setUser(user2);
-    album.setInternal(false);
-    rtu2Album1 = albumRepo.save(album);
+    playlist = new Playlist();
+    playlist.setName("rtu2 playlist - public");
+    playlist.setDescription("rtu2 playlist - public");
+    playlist.setUser(user2);
+    playlist.setInternal(false);
+    rtu2Playlist1 = playlistRepo.save(playlist);
 
-    album = new Album();
-    album.setName("rtu2 album - private");
-    album.setDescription("rtu2 album - private");
-    album.setUser(user2);
-    album.setInternal(true);
-    rtu2Album2 = albumRepo.save(album);
+    playlist = new Playlist();
+    playlist.setName("rtu2 playlist - private");
+    playlist.setDescription("rtu2 playlist - private");
+    playlist.setUser(user2);
+    playlist.setInternal(true);
+    rtu2Playlist2 = playlistRepo.save(playlist);
 
     MockMultipartFile mp3File = new MockMultipartFile("audio", "mp3.mp3", "audio/mp3", new FileInputStream(mp3correctFile));
     Song song = new Song();
     song.setArtist("art1");
-    song.setTitle("rtu1-album1-song");
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album1.getId())
+    song.setTitle("rtu1-playlist1-song");
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
             .file(mp3File)
             .content(convertObjectToJsonString(song)).contentType("multipart/form-data")
             .principal(principal1))
             .andExpect(status().isOk()).andReturn();
-    rtu1Album1Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
+    rtu1Playlist1Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
 
-//    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album2.getId())
+//    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist2.getId())
 //            .file(mp3File)
 //            .principal(principal1)
 //            .content()
 //            .param("artist", "art2")
-//            .param("title", "rtu1-album2-song"))
+//            .param("title", "rtu1-playlist2-song"))
 //            .andExpect(status().isOk()).andReturn();
-//    rtu1Album2Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
+//    rtu1Playlist2Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
 //
-//    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu2Album1.getId())
+//    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu2Playlist1.getId())
 //            .file(mp3File)
 //            .principal(principal2)
 //            .param("artist", "art2")
-//            .param("title", "rtu2-album1-song"))
+//            .param("title", "rtu2-playlist1-song"))
 //            .andExpect(status().isOk()).andReturn();
-//    rtu2Album1Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
+//    rtu2Playlist1Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
 //
-//    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu2Album2.getId())
+//    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu2Playlist2.getId())
 //            .file(mp3File)
 //            .principal(principal2)
 //            .param("artist", "art2")
 //            .param("title", "song2"))
 //            .andExpect(status().isOk()).andReturn();
-//    rtu2Album2Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
+//    rtu2Playlist2Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
   }
 
   @Test
   public void createSongTest() throws Exception {
     MockMultipartFile mp3File = new MockMultipartFile("audio", "mp3.mp3", "audio/mp3", new FileInputStream(mp3correctFile));
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album1.getId())
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
             .file(mp3File)
             .principal(principal1)
             .param("artist", "art1")
             .param("title", "song1"))
             .andExpect(status().isOk());
 
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album2.getId())
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist2.getId())
             .file(mp3File)
             .principal(principal1)
             .param("artist", "art2")
             .param("title", "song2"))
             .andExpect(status().isOk());
 
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu2Album1.getId())
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu2Playlist1.getId())
             .file(mp3File)
             .principal(principal2)
             .param("artist", "art2")
             .param("title", "song2"))
             .andExpect(status().isOk());
 
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu2Album2.getId())
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu2Playlist2.getId())
             .file(mp3File)
             .principal(principal2)
             .param("artist", "art2")
             .param("title", "song2"))
             .andExpect(status().isOk());
 
-    // Try to upload to another user album
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album1.getId())
+    // Try to upload to another user playlist
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
             .file(mp3File)
             .principal(principal2)
             .param("artist", "art2")
@@ -217,7 +217,7 @@ public class SongController {
             .andExpect(status().isNotFound());
 
     // Try to upload empty file
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album1.getId())
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
             //.file(mp3File)
             .principal(principal2)
             .param("artist", "art2")
@@ -226,7 +226,7 @@ public class SongController {
 
     // Try to upload a wrong file
     MockMultipartFile incorrectMp3File = new MockMultipartFile("audio", "wrong.mp3", "image/jpg", new FileInputStream(mp3incorrectFile));
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album1.getId())
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
             .file(incorrectMp3File)
             .principal(principal1)
             .param("artist", "art2")
@@ -235,7 +235,7 @@ public class SongController {
 
     // Try to upload a empty file (with correct headers)
     MockMultipartFile emptyMp3File = new MockMultipartFile("audio", "empty.mp3", "audio/mp3", new FileInputStream(mp3emptyFile));
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/album/{albumId}/song", rtu1Album1.getId())
+    mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
             .file(emptyMp3File)
             .principal(principal1)
             .param("artist", "art2")
@@ -243,149 +243,149 @@ public class SongController {
             .andExpect(status().isNotAcceptable());
   }
 
-  // @PutMapping(value = "/api/album/{albumId}/song/{id}") // U
-  // @DeleteMapping(value = "/api/album/{albumId}/song/{id}") // D
+  // @PutMapping(value = "/api/playlist/{playlistId}/song/{id}") // U
+  // @DeleteMapping(value = "/api/playlist/{playlistId}/song/{id}") // D
   @Test
   public void getSongs() throws Exception {
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}", rtu1Album1.getId(), rtu1Album1Song.getId()).contentType(contentType)
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isOk());
 
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}", rtu1Album2.getId(), rtu1Album2Song.getId()).contentType(contentType)
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isOk());
 
-    // Try to get song from public album from another user
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}", rtu1Album1.getId(), rtu1Album1Song.getId()).contentType(contentType)
+    // Try to get song from public playlist from another user
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType)
             .principal(principal2))
             .andExpect(status().isOk());
 
-    // Try to get song from public album from another user
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}", rtu1Album2.getId(), rtu1Album2Song.getId()).contentType(contentType)
+    // Try to get song from public playlist from another user
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType)
             .principal(principal2))
             .andExpect(status().isNotFound());
 
-    // Try to get non-existing song from public album from owner user
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}", rtu1Album1.getId(), rtu2Album1Song.getId()).contentType(contentType)
+    // Try to get non-existing song from public playlist from owner user
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isNotFound());
 
-    // Try to get non-existing song from public album from another user
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}", rtu1Album1.getId(), rtu2Album1Song.getId()).contentType(contentType)
+    // Try to get non-existing song from public playlist from another user
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType)
             .principal(principal2))
             .andExpect(status().isNotFound());
   }
 
   @Test
   public void getMP3File() throws Exception {
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}/mp3", rtu1Album1.getId(), rtu1Album1Song.getId()).contentType(contentType)
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isOk());
 
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}/mp3", rtu1Album2.getId(), rtu1Album2Song.getId()).contentType(contentType)
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isOk());
 
-    // Try to get song from public album from another user
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}/mp3", rtu1Album1.getId(), rtu1Album1Song.getId()).contentType(contentType)
+    // Try to get song from public playlist from another user
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType)
             .principal(principal2))
             .andExpect(status().isOk());
 
-    // Try to get song from public album from another user
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}/mp3", rtu1Album2.getId(), rtu1Album2Song.getId()).contentType(contentType)
+    // Try to get song from public playlist from another user
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType)
             .principal(principal2))
             .andExpect(status().isNotFound());
 
-    // Try to get non-existing song from public album from owner user
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}/mp3", rtu1Album1.getId(), rtu2Album1Song.getId()).contentType(contentType)
+    // Try to get non-existing song from public playlist from owner user
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isNotFound());
 
-    // Try to get non-existing song from public album from another user
-    mockMvc.perform(get("/api/album/{albumId}/song/{id}/mp3", rtu1Album1.getId(), rtu2Album1Song.getId()).contentType(contentType)
+    // Try to get non-existing song from public playlist from another user
+    mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType)
             .principal(principal2))
             .andExpect(status().isNotFound());
   }
 
   @Test
-  public void getAlbumSongs() throws Exception {
-    // Try to get album's song from public album by owner
-    mockMvc.perform(get("/api/album/{albumId}/songs", rtu1Album1.getId()).contentType(contentType)
+  public void getPlaylistSongs() throws Exception {
+    // Try to get playlist's song from public playlist by owner
+    mockMvc.perform(get("/api/playlist/{playlistId}/songs", rtu1Playlist1.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(1)));
 
-    // Try to get album's song from private album by owner
-    mockMvc.perform(get("/api/album/{albumId}/songs", rtu1Album2.getId()).contentType(contentType)
+    // Try to get playlist's song from private playlist by owner
+    mockMvc.perform(get("/api/playlist/{playlistId}/songs", rtu1Playlist2.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(1)));
 
-    // Try to get album's song from public album by another user
-    mockMvc.perform(get("/api/album/{albumId}/songs", rtu2Album1.getId()).contentType(contentType)
+    // Try to get playlist's song from public playlist by another user
+    mockMvc.perform(get("/api/playlist/{playlistId}/songs", rtu2Playlist1.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(1)));
 
-    // Try to get album's song from private album by another user
-    mockMvc.perform(get("/api/album/{albumId}/songs", rtu2Album2.getId()).contentType(contentType)
+    // Try to get playlist's song from private playlist by another user
+    mockMvc.perform(get("/api/playlist/{playlistId}/songs", rtu2Playlist2.getId()).contentType(contentType)
             .principal(principal1))
             .andExpect(status().isNotFound());
   }
 
   @Test
   public void update() throws Exception {
-    // Try to change song from public album by song owner
+    // Try to change song from public playlist by song owner
     Song song = new Song();
-    song.setId(rtu1Album1Song.getId());
+    song.setId(rtu1Playlist1Song.getId());
     song.setArtist("art1-edited");
-    song.setTitle("rtu1-album1-song-edited");
+    song.setTitle("rtu1-playlist1-song-edited");
 
-    mockMvc.perform(put("/api/album/{albumId}/song/{id}", rtu1Album1.getId(), rtu1Album1Song.getId()).contentType(contentType).principal(principal1)
+    mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType).principal(principal1)
             .content(convertObjectToJsonString(song)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is(rtu1Album1Song.getId())))
+            .andExpect(jsonPath("$.id", is(rtu1Playlist1Song.getId())))
             .andExpect(jsonPath("$.title", is(song.getTitle())))
             .andExpect(jsonPath("$.artist", is(song.getArtist())));
 
-    // Try to change song from private album by song owner
+    // Try to change song from private playlist by song owner
     song = new Song();
-    song.setId(rtu1Album1Song.getId());
+    song.setId(rtu1Playlist1Song.getId());
     song.setArtist("art1-edited");
-    song.setTitle("rtu1-album2-song-edited");
-    mockMvc.perform(put("/api/album/{albumId}/song/{id}", rtu1Album2.getId(), rtu1Album2Song.getId()).contentType(contentType).principal(principal1)
+    song.setTitle("rtu1-playlist2-song-edited");
+    mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType).principal(principal1)
             .content(convertObjectToJsonString(song)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is(rtu1Album2Song.getId())))
+            .andExpect(jsonPath("$.id", is(rtu1Playlist2Song.getId())))
             .andExpect(jsonPath("$.title", is(song.getTitle())))
             .andExpect(jsonPath("$.artist", is(song.getArtist())));
 
 
-    // Try to change song from public album by another user
+    // Try to change song from public playlist by another user
     song = new Song();
-    song.setId(rtu1Album1Song.getId());
+    song.setId(rtu1Playlist1Song.getId());
     song.setArtist("art1-edited");
-    song.setTitle("rtu2-album1-song-edited");
+    song.setTitle("rtu2-playlist1-song-edited");
 
-    mockMvc.perform(put("/api/album/{albumId}/song/{id}", rtu1Album1.getId(), rtu1Album1Song.getId()).contentType(contentType).principal(principal2)
+    mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType).principal(principal2)
             .content(convertObjectToJsonString(song)))
             .andExpect(status().isNotFound());
 
-    // Try to change song from private album by another user
+    // Try to change song from private playlist by another user
     song = new Song();
-    song.setId(rtu1Album2Song.getId());
+    song.setId(rtu1Playlist2Song.getId());
     song.setArtist("art1-edited");
-    song.setTitle("rtu2-album2-song-edited");
-    mockMvc.perform(put("/api/album/{albumId}/song/{id}", rtu1Album2.getId(), rtu1Album2Song.getId()).contentType(contentType).principal(principal2)
+    song.setTitle("rtu2-playlist2-song-edited");
+    mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType).principal(principal2)
             .content(convertObjectToJsonString(song)))
             .andExpect(status().isNotFound());
 
-    // Try to change song from another album
+    // Try to change song from another playlist
     song = new Song();
-    song.setId(rtu2Album1Song.getId());
+    song.setId(rtu2Playlist1Song.getId());
     song.setArtist("art1-edited");
-    song.setTitle("rtu2-album2-song-edited");
-    mockMvc.perform(put("/api/album/{albumId}/song/{id}", rtu1Album1.getId(), rtu2Album1Song.getId()).contentType(contentType).principal(principal2)
+    song.setTitle("rtu2-playlist2-song-edited");
+    mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType).principal(principal2)
             .content(convertObjectToJsonString(song)))
             .andExpect(status().isNotFound());
 
@@ -393,11 +393,11 @@ public class SongController {
     song = new Song();
     song.setId(UUID.randomUUID().toString());
     song.setArtist("art1-edited");
-    song.setTitle("rtu2-album2-song-edited");
-    mockMvc.perform(put("/api/album/{albumId}/song/{id}", rtu2Album2.getId(), rtu2Album2Song.getId()).contentType(contentType).principal(principal2)
+    song.setTitle("rtu2-playlist2-song-edited");
+    mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu2Playlist2.getId(), rtu2Playlist2Song.getId()).contentType(contentType).principal(principal2)
             .content(convertObjectToJsonString(song)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is(rtu2Album2Song.getId())))
+            .andExpect(jsonPath("$.id", is(rtu2Playlist2Song.getId())))
             .andExpect(jsonPath("$.title", is(song.getTitle())))
             .andExpect(jsonPath("$.artist", is(song.getArtist())));
   }
@@ -410,7 +410,7 @@ public class SongController {
   @After
   public void destroy() {
     userRepo.deleteAll();
-    albumRepo.deleteAll();
+    playlistRepo.deleteAll();
     songRepo.deleteAll();
   }
 

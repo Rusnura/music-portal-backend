@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import server.exceptions.IncorrectAudioException;
 import server.exceptions.ResourceNotFoundException;
-import server.models.Album;
+import server.models.Playlist;
 import server.models.Song;
 import server.repositories.SongRepository;
 import javax.annotation.PostConstruct;
@@ -42,15 +42,15 @@ public class SongService extends AbstractService<Song> {
         audioFilesDirectory = new File(audioFilesDirectoryPath);
     }
 
-    public Page<Song> findByAlbum(Album album, Pageable pageable) {
-        return songRepo.findAllByAlbum(album, pageable);
+    public Page<Song> findByPlaylist(Playlist playlist, Pageable pageable) {
+        return songRepo.findAllByPlaylist(playlist, pageable);
     }
 
     public Page<Song> findByUser(String username, Pageable pageable) {
         return songRepo.findAllByUser_Username(username, pageable);
     }
 
-    public Song save(MultipartFile audioFile, Album album, String title, String artist) throws IllegalStateException, IOException {
+    public Song save(MultipartFile audioFile, Playlist playlist, String title, String artist) throws IllegalStateException, IOException {
         // TODO: Need security implementing
         File uploadedFile;
         if (!audioFile.isEmpty() && audioFile.getOriginalFilename() != null) {
@@ -59,15 +59,15 @@ public class SongService extends AbstractService<Song> {
             }
 
             if (audioFilesDirectory.exists() && audioFilesDirectory.canWrite()) {
-                File albumDirectory = new File(audioFilesDirectory, album.getId());
-                if (!albumDirectory.exists()) {
-                    albumDirectory.mkdir();
+                File playlistDirectory = new File(audioFilesDirectory, playlist.getId());
+                if (!playlistDirectory.exists()) {
+                    playlistDirectory.mkdir();
                 }
 
-                if (albumDirectory.canWrite()) {
+                if (playlistDirectory.canWrite()) {
                     try {
                         byte[] bytes = audioFile.getBytes();
-                        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(uploadedFile = new File(albumDirectory, audioFile.getOriginalFilename())));
+                        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(uploadedFile = new File(playlistDirectory, audioFile.getOriginalFilename())));
                         bos.write(bytes);
                         bos.close();
                     } catch (Exception e) {
@@ -75,13 +75,13 @@ public class SongService extends AbstractService<Song> {
                         throw new IncorrectAudioException("Can't upload your mp3 file!");
                     }
                 } else {
-                    LOGGER.log(Level.WARNING, "Album directory isn't writable! Album directory = " + albumDirectory.getPath() +
-                            ", canRead=" + albumDirectory.canRead() +
-                            ", canWrite=" + albumDirectory.canWrite());
+                    LOGGER.log(Level.WARNING, "Playlist directory isn't writable! Playlist directory = " + playlistDirectory.getPath() +
+                            ", canRead=" + playlistDirectory.canRead() +
+                            ", canWrite=" + playlistDirectory.canWrite());
                     throw new IOException("Uploading directory isn't writable!");
                 }
             } else {
-                LOGGER.log(Level.WARNING, "Album directory isn't writable! Album directory = " + audioFilesDirectory.getPath() +
+                LOGGER.log(Level.WARNING, "Playlist directory isn't writable! Playlist directory = " + audioFilesDirectory.getPath() +
                         ", exists=" + audioFilesDirectory.exists() +
                         ", canRead=" + audioFilesDirectory.canRead() +
                         ", canWrite=" + audioFilesDirectory.canWrite());
@@ -92,7 +92,7 @@ public class SongService extends AbstractService<Song> {
         }
 
         Song song = new Song();
-        song.setAlbum(album);
+        song.setPlaylist(playlist);
         if (StringUtils.isEmpty(artist) || StringUtils.isEmpty(title)) {
             try {
                 Mp3File mp3file = new Mp3File(uploadedFile);
@@ -109,15 +109,15 @@ public class SongService extends AbstractService<Song> {
                 LOGGER.log(Level.WARNING, "Cannot to get mp3 tags! Skipping...");
             }
         }
-        song.setUser(album.getUser());
+        song.setUser(playlist.getUser());
         song.setArtist((StringUtils.isEmpty(artist) ? "Неизвестно": artist));
         song.setTitle((StringUtils.isEmpty(title) ? "Неизвестно": title));
         song.setPath(uploadedFile.getPath());
         return save(song);
     }
 
-    public Song get(Album album, String songId) {
-        return songRepo.findByAlbumAndId(album, songId).orElseThrow(() -> new ResourceNotFoundException("Song with ID='" + songId + "' not found!"));
+    public Song get(Playlist playlist, String songId) {
+        return songRepo.findByPlaylistAndId(playlist, songId).orElseThrow(() -> new ResourceNotFoundException("Song with ID='" + songId + "' not found!"));
     }
 
     public void delete(Song song) {

@@ -9,8 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Entity
-@Table(name = "ALBUMS")
-public class Album extends AbstractEntity {
+@Table(name = "PLAYLISTS")
+public class Playlist extends AbstractEntity {
     private String name;
     @Lob
     private String description;
@@ -24,10 +24,10 @@ public class Album extends AbstractEntity {
     private User user;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Song> songs = new LinkedList<>();
 
-    public Album() {}
+    public Playlist() {}
 
     public String getName() {
         return name;
@@ -57,8 +57,8 @@ public class Album extends AbstractEntity {
         return internal;
     }
 
-    public void setInternal(boolean isPrivateAlbum) {
-        this.internal = isPrivateAlbum;
+    public void setInternal(boolean isPrivatePlaylist) {
+        this.internal = isPrivatePlaylist;
     }
 
     public User getUser() {

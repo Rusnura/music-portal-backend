@@ -22,7 +22,7 @@ public class User extends AbstractEntity implements UserDetails {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Album> albums = new LinkedList<>();
+    private List<Playlist> playlists = new LinkedList<>();
 
     public String getName() {
         return name;
@@ -107,11 +107,11 @@ public class User extends AbstractEntity implements UserDetails {
         return new ArrayList<>();
     }
 
-    public List<Album> getAlbums() {
-        return albums;
+    public List<Playlist> getPlaylists() {
+        return playlists;
     }
 
-    public void setAlbums(List<Album> albums) {
-        this.albums = albums;
+    public void setPlaylists(List<Playlist> playlists) {
+        this.playlists = playlists;
     }
 }
