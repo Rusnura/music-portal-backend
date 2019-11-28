@@ -99,11 +99,11 @@ public class SongService extends AbstractService<Song> {
                 if (mp3file.hasId3v1Tag()) {
                     ID3v1 id3v1Tag = mp3file.getId3v1Tag();
                     artist = StringUtils.isEmpty(artist) ? id3v1Tag.getArtist() : artist;
-                    title = StringUtils.isEmpty(title) ? id3v1Tag.getArtist() : artist;
+                    title = StringUtils.isEmpty(title) ? id3v1Tag.getTitle() : title;
                 } else if (mp3file.hasId3v2Tag()) {
                     ID3v2 id3v2Tag = mp3file.getId3v2Tag();
                     artist = StringUtils.isEmpty(artist) ? id3v2Tag.getArtist() : artist;
-                    title = StringUtils.isEmpty(title) ? id3v2Tag.getArtist() : artist;
+                    title = StringUtils.isEmpty(title) ? id3v2Tag.getTitle() : title;
                 }
             } catch (UnsupportedTagException | InvalidDataException e) {
                 LOGGER.log(Level.WARNING, "Cannot to get mp3 tags! Skipping...");
