@@ -11,7 +11,7 @@ public class CommonController {
     private static final Logger LOGGER = Logger.getLogger(CommonController.class.getName());
 
     @PostMapping(value = "/api/download")
-    public ResponseEntity<?> downloadSong(@RequestParam String url) {
+    public ResponseEntity<?> downloadFile(@RequestParam String url) {
         // TODO: Release of downloading a song from URL
         return null;
     }

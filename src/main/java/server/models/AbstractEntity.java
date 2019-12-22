@@ -10,7 +10,7 @@ import java.util.UUID;
 @EntityListeners({ AbstractEntity.AbstractEntityListener.class })
 public abstract class AbstractEntity {
     @Id
-    String id;
+    private String id;
 
     public String getId() {
         return id;
