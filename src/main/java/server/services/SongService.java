@@ -17,6 +17,7 @@ import server.exceptions.IncorrectAudioException;
 import server.exceptions.ResourceNotFoundException;
 import server.interfaces.IFilesStorage;
 import server.interfaces.impls.DirectoryFilesStorage;
+import server.interfaces.impls.RemoteURLFilesStorage;
 import server.models.Playlist;
 import server.models.Song;
 import server.repositories.SongRepository;
@@ -43,7 +44,7 @@ public class SongService extends AbstractService<Song> {
     @PostConstruct
     private void init() {
         try {
-            URL url = new URL(audioFilesSource);
+            filesStorage = new RemoteURLFilesStorage(new URL(audioFilesSource));
             LOGGER.info("***URL storage has been detected!***");
         } catch (MalformedURLException e) {
             File directory = new File(audioFilesSource);
@@ -72,6 +73,8 @@ public class SongService extends AbstractService<Song> {
             }
             if (filesStorage instanceof DirectoryFilesStorage) {
                 uploadedFile = (File) filesStorage.write(audioFile, playlist.getId());
+            } else if (filesStorage instanceof RemoteURLFilesStorage) {
+
             }
         } else {
             throw new IncorrectAudioException("Uploading file is empty!");

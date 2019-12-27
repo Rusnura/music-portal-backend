@@ -15,8 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DirectoryFilesStorage implements IFilesStorage<File> {
-    private static final Logger LOGGER = Logger.getLogger(SongService.class.getName());
-    private File audioFilesDirectory;
+    private static final Logger LOGGER = Logger.getLogger(DirectoryFilesStorage.class.getName());
+    private final File audioFilesDirectory;
 
     public DirectoryFilesStorage(File audioFilesDirectory) {
         this.audioFilesDirectory = audioFilesDirectory;
