@@ -7,6 +7,7 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,14 +15,17 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import server.exceptions.IncorrectAudioException;
 import server.exceptions.ResourceNotFoundException;
+import server.interfaces.IFilesStorage;
+import server.interfaces.impls.DirectoryFilesStorage;
+import server.interfaces.impls.RemoteURLFilesStorage;
 import server.models.Playlist;
 import server.models.Song;
 import server.repositories.SongRepository;
 import javax.annotation.PostConstruct;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,15 +35,25 @@ public class SongService extends AbstractService<Song> {
     public static final String MP3_CONTENT_TYPE = "audio/mp3";
 
     @Value("${music.dir}")
-    private String audioFilesDirectoryPath;
-    private File audioFilesDirectory;
+    private String audioFilesSource;
+    private IFilesStorage filesStorage;
 
     @Autowired
     private SongRepository songRepo;
 
     @PostConstruct
     private void init() {
-        audioFilesDirectory = new File(audioFilesDirectoryPath);
+        try {
+            filesStorage = new RemoteURLFilesStorage(new URL(audioFilesSource));
+            LOGGER.info("***URL storage has been detected!***");
+        } catch (MalformedURLException e) {
+            File directory = new File(audioFilesSource);
+            if (!directory.exists() || !directory.canWrite()) {
+                throw new ExceptionInInitializerError("Cannot initialize a songs storage. Please, correct application.yaml file!");
+            }
+            filesStorage = new DirectoryFilesStorage(directory);
+            LOGGER.info("***Directory storage has been detected!***");
+        }
     }
 
     public Page<Song> findByPlaylist(Playlist playlist, Pageable pageable) {
@@ -51,41 +65,16 @@ public class SongService extends AbstractService<Song> {
     }
 
     public Song save(MultipartFile audioFile, Playlist playlist, String title, String artist) throws IllegalStateException, IOException {
+        File uploadedFile = null;
         // TODO: Need security implementing
-        File uploadedFile;
         if (!audioFile.isEmpty() && audioFile.getOriginalFilename() != null) {
             if (!MP3_CONTENT_TYPE.equals(audioFile.getContentType())) {
                 throw new IncorrectAudioException("Please, upload correct MP3 file!");
             }
+            if (filesStorage instanceof DirectoryFilesStorage) {
+                uploadedFile = (File) filesStorage.write(audioFile, playlist.getId());
+            } else if (filesStorage instanceof RemoteURLFilesStorage) {
 
-            if (audioFilesDirectory.exists() && audioFilesDirectory.canWrite()) {
-                File playlistDirectory = new File(audioFilesDirectory, playlist.getId());
-                if (!playlistDirectory.exists()) {
-                    playlistDirectory.mkdir();
-                }
-
-                if (playlistDirectory.canWrite()) {
-                    try {
-                        byte[] bytes = audioFile.getBytes();
-                        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(uploadedFile = new File(playlistDirectory, audioFile.getOriginalFilename())));
-                        bos.write(bytes);
-                        bos.close();
-                    } catch (Exception e) {
-                        LOGGER.log(Level.WARNING, "Cannot upload file: " + e.getMessage() + "!", e);
-                        throw new IncorrectAudioException("Can't upload your mp3 file!");
-                    }
-                } else {
-                    LOGGER.log(Level.WARNING, "Playlist directory isn't writable! Playlist directory = " + playlistDirectory.getPath() +
-                            ", canRead=" + playlistDirectory.canRead() +
-                            ", canWrite=" + playlistDirectory.canWrite());
-                    throw new IOException("Uploading directory isn't writable!");
-                }
-            } else {
-                LOGGER.log(Level.WARNING, "Playlist directory isn't writable! Playlist directory = " + audioFilesDirectory.getPath() +
-                        ", exists=" + audioFilesDirectory.exists() +
-                        ", canRead=" + audioFilesDirectory.canRead() +
-                        ", canWrite=" + audioFilesDirectory.canWrite());
-                throw new IncorrectAudioException("User data directory isn't writable");
             }
         } else {
             throw new IncorrectAudioException("Uploading file is empty!");
@@ -118,6 +107,10 @@ public class SongService extends AbstractService<Song> {
 
     public Song get(Playlist playlist, String songId) {
         return songRepo.findByPlaylistAndId(playlist, songId).orElseThrow(() -> new ResourceNotFoundException("Song with ID='" + songId + "' not found!"));
+    }
+
+    public ByteArrayResource getMP3File(Song requestingSong) throws IOException {
+        return new ByteArrayResource(filesStorage.load(requestingSong.getPath()));
     }
 
     public void delete(Song song) {

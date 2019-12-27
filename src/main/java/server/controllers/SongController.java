@@ -19,11 +19,8 @@ import server.services.SongService;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.NoSuchFileException;
 import java.util.logging.Logger;
 
 @RestController
@@ -60,18 +57,16 @@ public class SongController {
     @GetMapping(value = "/api/playlist/{playlistId}/song/{id}/mp3") // R - mp3
     public ResponseEntity<?> getFile(@PathVariable String playlistId, @PathVariable String id, Authentication authentication) throws IOException {
         Song requestingSong = songService.get(playlistService.checkAccessAndGet(playlistId, authentication.getName()), id);
-        File file = new File(requestingSong.getPath());
-        if (file.exists()) {
-            Path mp3FilePath = Paths.get(file.getAbsolutePath());
-            ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(mp3FilePath));
-
+        try {
+            ByteArrayResource file = songService.getMP3File(requestingSong);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + requestingSong.getArtist() + "-" + requestingSong.getTitle() +".mp3")
-                    .contentLength(file.length())
+                    .contentLength(file.contentLength())
                     .contentType(MediaType.parseMediaType(SongService.MP3_CONTENT_TYPE))
-                    .body(resource);
+                    .body(file);
+        } catch (NoSuchFileException e) {
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/api/playlist/{playlistId}/songs") // R - playlist
