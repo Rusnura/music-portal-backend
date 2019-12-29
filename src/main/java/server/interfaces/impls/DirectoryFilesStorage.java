@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DirectoryFilesStorage implements IFilesStorage<File> {
+public class DirectoryFilesStorage implements IFilesStorage {
     private static final Logger LOGGER = Logger.getLogger(DirectoryFilesStorage.class.getName());
     private final File audioFilesDirectory;
 
@@ -24,7 +24,7 @@ public class DirectoryFilesStorage implements IFilesStorage<File> {
     }
 
     @Override
-    public File write(MultipartFile uploadedAudioFile, String subDirectoryName) throws IOException {
+    public String write(MultipartFile uploadedAudioFile, String subDirectoryName) throws IOException {
         File audioFile;
         if (audioFilesDirectory.exists() && audioFilesDirectory.canWrite()) {
             File playlistDirectory = new File(audioFilesDirectory, subDirectoryName);
@@ -61,7 +61,7 @@ public class DirectoryFilesStorage implements IFilesStorage<File> {
                     ", canWrite=" + audioFilesDirectory.canWrite());
             throw new IncorrectAudioException("User data directory isn't writable");
         }
-        return audioFile;
+        return audioFile.getAbsolutePath();
     }
 
     @Override

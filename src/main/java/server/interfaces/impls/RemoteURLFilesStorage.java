@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Logger;
 
-public class RemoteURLFilesStorage implements IFilesStorage<File> {
+public class RemoteURLFilesStorage implements IFilesStorage {
     private static final Logger LOGGER = Logger.getLogger(RemoteURLFilesStorage.class.getName());
     private final URL remoteFileStorageUrl;
 
@@ -16,7 +16,7 @@ public class RemoteURLFilesStorage implements IFilesStorage<File> {
     }
 
     @Override
-    public File write(MultipartFile uploadedAudioFile, String subDirectoryName) throws IOException {
+    public String write(MultipartFile uploadedAudioFile, String subDirectoryName) throws IOException {
         return null;
     }
 
