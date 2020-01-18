@@ -104,9 +104,9 @@ public class SongService extends AbstractService<Song> {
 
     public ByteArrayResource getMP3File(Song requestingSong) throws IOException { // FIXME: Refactor this functional
         String path = requestingSong.getPath();
-		LOGGER.info("*** Starting fetching a song: '" + path + "' (Song: " + requestingSong +") ***");
+		LOGGER.info("*** Starting fetching a song: '" + requestingSong + "' ***");
 		if (StringUtils.isEmpty(path)) {
-    		throw new IllegalArgumentException("Song path was not found!");
+    		throw new IllegalArgumentException("Songs path was not found!");
 		}
 		IFileStorageReader fileReader;
     	if (path.startsWith("http://") || path.startsWith("https://")) {

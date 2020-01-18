@@ -83,4 +83,16 @@ public class Song extends AbstractEntity {
     public void setUser(User user) {
         this.user = user;
     }
+
+	@Override
+	public String toString() {
+		return "Song{" +
+			"title='" + title + '\'' +
+			", artist='" + artist + '\'' +
+			", uploadDate=" + uploadDate +
+			", path='" + path + '\'' +
+			", playlist=" + playlist +
+			", user=" + user +
+			'}';
+	}
 }
