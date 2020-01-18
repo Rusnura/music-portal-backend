@@ -2,8 +2,8 @@ package server.interfaces.impls;
 
 import org.springframework.web.multipart.MultipartFile;
 import server.exceptions.IncorrectAudioException;
-import server.interfaces.IFilesStorage;
-import server.services.SongService;
+import server.interfaces.IFilesStorageWriter;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,11 +15,11 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DirectoryFilesStorage implements IFilesStorage {
-    private static final Logger LOGGER = Logger.getLogger(DirectoryFilesStorage.class.getName());
+public class DirectoryFilesStorageWriter implements IFilesStorageWriter {
+    private static final Logger LOGGER = Logger.getLogger(DirectoryFilesStorageWriter.class.getName());
     private final File audioFilesDirectory;
 
-    public DirectoryFilesStorage(File audioFilesDirectory) {
+    public DirectoryFilesStorageWriter(File audioFilesDirectory) {
         this.audioFilesDirectory = audioFilesDirectory;
     }
 
@@ -62,19 +62,5 @@ public class DirectoryFilesStorage implements IFilesStorage {
             throw new IncorrectAudioException("User data directory isn't writable");
         }
         return audioFile.getAbsolutePath();
-    }
-
-    @Override
-    public byte[] load(String filePath) throws IOException {
-        File file = new File(filePath);
-        if (file.exists()) {
-            if (file.canRead()) {
-                return Files.readAllBytes(Paths.get(filePath));
-            } else {
-                throw new IOException("User file isn't a readable!");
-            }
-        } else {
-            throw new NoSuchFileException("User file doesn't exists!");
-        }
     }
 }

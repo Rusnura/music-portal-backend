@@ -7,17 +7,17 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import server.interfaces.IFilesStorage;
+import server.interfaces.IFilesStorageWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RemoteURLFilesStorage implements IFilesStorage {
-    private static final Logger LOGGER = Logger.getLogger(RemoteURLFilesStorage.class.getName());
+public class RemoteURLFilesStorageWriter implements IFilesStorageWriter {
+    private static final Logger LOGGER = Logger.getLogger(RemoteURLFilesStorageWriter.class.getName());
     private final URL remoteFileStorageUrl;
 
-    public RemoteURLFilesStorage(URL remoteFileStorageUrl) {
+    public RemoteURLFilesStorageWriter(URL remoteFileStorageUrl) {
         this.remoteFileStorageUrl = remoteFileStorageUrl;
     }
 
@@ -59,10 +59,5 @@ public class RemoteURLFilesStorage implements IFilesStorage {
 		}
 		String uploadedFileName = uploadedFile.get("name").asText();
 		return url + "file?path=" + uploadedFileName;
-    }
-
-    @Override
-    public byte[] load(String filePath) throws IOException {
-        return IOUtils.toByteArray(new URL(filePath));
     }
 }

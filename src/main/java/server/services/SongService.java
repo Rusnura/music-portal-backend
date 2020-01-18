@@ -16,9 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 import server.exceptions.IncorrectAudioException;
 import server.exceptions.ResourceNotFoundException;
-import server.interfaces.IFilesStorage;
-import server.interfaces.impls.DirectoryFilesStorage;
-import server.interfaces.impls.RemoteURLFilesStorage;
+import server.interfaces.IFileStorageReader;
+import server.interfaces.IFilesStorageWriter;
+import server.interfaces.impls.DirectoryFilesStorageReader;
+import server.interfaces.impls.DirectoryFilesStorageWriter;
+import server.interfaces.impls.RemoteURLFileStorageReader;
+import server.interfaces.impls.RemoteURLFilesStorageWriter;
 import server.models.Playlist;
 import server.models.Song;
 import server.repositories.SongRepository;
@@ -37,7 +40,7 @@ public class SongService extends AbstractService<Song> {
 
     @Value("${music.dir}")
     private String audioFilesSource;
-    private IFilesStorage filesStorage;
+    private IFilesStorageWriter filesStorage;
 
     @Autowired
     private SongRepository songRepo;
@@ -45,14 +48,14 @@ public class SongService extends AbstractService<Song> {
     @PostConstruct
     private void init() {
         try {
-            filesStorage = new RemoteURLFilesStorage(new URL(audioFilesSource));
+            filesStorage = new RemoteURLFilesStorageWriter(new URL(audioFilesSource));
             LOGGER.info("***URL storage has been detected!***");
         } catch (MalformedURLException e) {
             File directory = new File(audioFilesSource);
             if (!directory.exists() || !directory.canWrite()) {
                 throw new ExceptionInInitializerError("Cannot initialize a songs storage. Please, correct application.yaml file!");
             }
-            filesStorage = new DirectoryFilesStorage(directory);
+            filesStorage = new DirectoryFilesStorageWriter(directory);
             LOGGER.info("***Directory storage has been detected!***");
         }
     }
@@ -99,8 +102,19 @@ public class SongService extends AbstractService<Song> {
         return songRepo.findByPlaylistAndId(playlist, songId).orElseThrow(() -> new ResourceNotFoundException("Song with ID='" + songId + "' not found!"));
     }
 
-    public ByteArrayResource getMP3File(Song requestingSong) throws IOException {
-        return new ByteArrayResource(filesStorage.load(requestingSong.getPath()));
+    public ByteArrayResource getMP3File(Song requestingSong) throws IOException { // FIXME: Refactor this functional
+        String path = requestingSong.getPath();
+		LOGGER.info("*** Starting fetching a song: '" + path + "' (Song: " + requestingSong +") ***");
+		if (StringUtils.isEmpty(path)) {
+    		throw new IllegalArgumentException("Song path was not found!");
+		}
+		IFileStorageReader fileReader;
+    	if (path.startsWith("http://") || path.startsWith("https://")) {
+			fileReader = new RemoteURLFileStorageReader();
+		} else {
+    		fileReader = new DirectoryFilesStorageReader();
+		}
+    	return new ByteArrayResource(fileReader.load(path));
     }
 
     public void delete(Song song) {
