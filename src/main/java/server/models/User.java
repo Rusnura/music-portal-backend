@@ -114,4 +114,18 @@ public class User extends AbstractEntity implements UserDetails {
     public void setPlaylists(List<Playlist> playlists) {
         this.playlists = playlists;
     }
+
+	@Override
+	public String toString() {
+		return "User{" +
+			"name='" + name + '\'' +
+			", lastname='" + lastname + '\'' +
+			", username='" + username + '\'' +
+			", registrationDate=" + registrationDate +
+			", isAccountNonExpired=" + isAccountNonExpired +
+			", isAccountNonLocked=" + isAccountNonLocked +
+			", isCredentialsNonExpired=" + isCredentialsNonExpired +
+			", isEnabled=" + isEnabled +
+			'}';
+	}
 }

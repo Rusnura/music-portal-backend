@@ -76,4 +76,15 @@ public class Playlist extends AbstractEntity {
     public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
+
+	@Override
+	public String toString() {
+		return "Playlist{" +
+			"name='" + name + '\'' +
+			", description='" + description + '\'' +
+			", createDate=" + createDate +
+			", internal=" + internal +
+			", user=" + user +
+			'}';
+	}
 }
