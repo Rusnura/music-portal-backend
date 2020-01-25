@@ -86,7 +86,7 @@ public class SongService extends AbstractService<Song> {
 				Mp3Parser Mp3Parser = new  Mp3Parser();
 				Mp3Parser.parse(audioFile.getInputStream(), handler, metadata, parseContext);
 				artist = StringUtils.isEmpty(artist) ? metadata.get("creator") : artist;
-				title = StringUtils.isEmpty(artist) ? metadata.get("title") : artist;
+				title = StringUtils.isEmpty(title) ? metadata.get("title") : title;
             } catch (SAXException | TikaException e) {
                 LOGGER.log(Level.WARNING, "Cannot to get mp3 tags! Skipping...");
             }
