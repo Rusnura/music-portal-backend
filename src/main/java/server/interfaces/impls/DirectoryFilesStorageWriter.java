@@ -3,14 +3,10 @@ package server.interfaces.impls;
 import org.springframework.web.multipart.MultipartFile;
 import server.exceptions.IncorrectAudioException;
 import server.interfaces.IFilesStorageWriter;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +25,7 @@ public class DirectoryFilesStorageWriter implements IFilesStorageWriter {
         if (audioFilesDirectory.exists() && audioFilesDirectory.canWrite()) {
             File playlistDirectory = new File(audioFilesDirectory, subDirectoryName);
             if (!playlistDirectory.exists()) {
-                if (playlistDirectory.mkdir()) {
+                if (!playlistDirectory.mkdir()) {
 					LOGGER.log(Level.WARNING, "Can't create a new playlist directory ! Playlist directory = " + playlistDirectory.getPath() +
 						", exists=" + playlistDirectory.exists() +
 						", canRead=" + playlistDirectory.canRead() +
