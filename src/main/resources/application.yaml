@@ -1,20 +1,17 @@
 spring:
-  h2:
-    console:
-      enabled: true
-      path: /h2
   datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:./music-data
-    username: ruslan
-    password:
+    url: jdbc:postgresql://localhost:5432/musicx
+    username: postgres
+    password: postgres
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    properties.hibernate.temp.use_jdbc_metadata_defaults: false
     hibernate:
-      ddl-auto: validate
+      show_sql: true
+      ddl-auto: create
+
 
 music:
-  dir: D:\Music\Server
+  dir: /mnt/HDD1/MusicX
 
 server:
   jwt:
