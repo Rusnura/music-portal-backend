@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "PLAYLISTS")
 public class Playlist extends AbstractEntity {
     private String name;
-    @Lob
+	@Column(length = 512)
     private String description;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date createDate = new Date();
