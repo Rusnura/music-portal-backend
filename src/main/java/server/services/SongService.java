@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 public class SongService extends AbstractService<Song> {
     private static final Logger LOGGER = Logger.getLogger(SongService.class.getName());
     public static final String MP3_CONTENT_TYPE = "audio/mp3";
+    public static final String MP3_MPEG_CONTENT_TYPE = "audio/mpeg";
 
     @Value("${music.dir}")
     private String audioFilesSource;
@@ -72,7 +73,8 @@ public class SongService extends AbstractService<Song> {
         if (audioFile.isEmpty() || StringUtils.isEmpty(audioFile.getOriginalFilename()))
 			throw new IncorrectAudioException("Uploading file is empty!");
 
-		if (!MP3_CONTENT_TYPE.equals(audioFile.getContentType()))
+		if (!MP3_CONTENT_TYPE.equals(audioFile.getContentType()) &&
+			!MP3_MPEG_CONTENT_TYPE.equals(audioFile.getContentType()))
 			throw new IncorrectAudioException("Please, upload correct MP3 file!");
 
         Song song = new Song();
