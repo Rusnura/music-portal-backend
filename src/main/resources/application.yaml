@@ -11,7 +11,7 @@ spring:
 
 
 music:
-  dir: /mnt/HDD1/MusicX
+  dir: http://localhost:8080/FileService
 
 server:
   jwt:
