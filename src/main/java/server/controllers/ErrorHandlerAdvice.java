@@ -11,7 +11,7 @@ import server.exceptions.ResourceNotFoundException;
 
 @RestControllerAdvice
 public class ErrorHandlerAdvice {
-  private static ObjectMapper objectMapper = new ObjectMapper();
+  private static final ObjectMapper objectMapper = new ObjectMapper();
 
   @ExceptionHandler(IncorrectAudioException.class)
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
