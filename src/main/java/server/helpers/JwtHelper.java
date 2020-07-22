@@ -32,16 +32,12 @@ public class JwtHelper {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDetails.getUsername());
-    }
-
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + Long.parseUnsignedLong(jwtTokenValidity) * 60 * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+		return Jwts.builder()
+			.setClaims(claims)
+			.setSubject(userDetails.getUsername())
+			.setIssuedAt(new Date(System.currentTimeMillis()))
+			.setExpiration(new Date(System.currentTimeMillis() + Long.parseUnsignedLong(jwtTokenValidity) * 60 * 1000))
+			.signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
