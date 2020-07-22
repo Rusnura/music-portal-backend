@@ -35,11 +35,9 @@ public class DirectoryFilesStorageWriter implements IFilesStorageWriter {
             }
 
             if (playlistDirectory.canWrite()) {
-                try {
+                try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(audioFile = new File(playlistDirectory, Objects.requireNonNull(uploadedAudioFile.getOriginalFilename()))))) {
                     byte[] bytes = uploadedAudioFile.getBytes();
-                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(audioFile = new File(playlistDirectory, Objects.requireNonNull(uploadedAudioFile.getOriginalFilename()))));
-                    bos.write(bytes);
-                    bos.close();
+					bos.write(bytes);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "Cannot upload file: " + e.getMessage() + "!", e);
                     throw new IncorrectAudioException("Can't upload your mp3 file!");
