@@ -17,7 +17,10 @@ import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-    @Autowired
+	private static final String BEARER = "Bearer ";
+	private static final int BEARER_STRING_LENGTH = BEARER.length();
+
+	@Autowired
     private DBUserDetailService jwtUserDetailsService;
 
     @Autowired
@@ -28,8 +31,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String requestTokenHeader = request.getHeader("Authorization");
         String username = null, jwtToken = null;
 
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
+        if (requestTokenHeader != null && requestTokenHeader.startsWith(BEARER)) {
+            jwtToken = requestTokenHeader.substring(BEARER_STRING_LENGTH);
             username = jwtHelper.getUsernameFromToken(jwtToken);
         }
 
