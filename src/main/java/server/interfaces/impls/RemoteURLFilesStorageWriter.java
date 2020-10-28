@@ -26,7 +26,7 @@ public class RemoteURLFilesStorageWriter implements IFilesStorageWriter {
     public String write(MultipartFile uploadedAudioFile, String subDirectoryName) throws IOException {
     	String url = remoteFileStorageUrl.toString();
     	if (!url.endsWith("/")) url += "/";
-    	String requestURL = url + "file?path=" + subDirectoryName + "&createParentFolders=true";
+    	String requestURL = url + "file?path=/Server/" + subDirectoryName + "&createParentFolders=true";
 		LinkedMultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
 		// Hack for uploading multipart file to another resource
 		ByteArrayResource contentsAsResource = new ByteArrayResource(uploadedAudioFile.getBytes()) {
@@ -59,6 +59,6 @@ public class RemoteURLFilesStorageWriter implements IFilesStorageWriter {
 			throw new IOException("File uploaded successfully, expected `name` but `null`.");
 		}
 		String uploadedFileName = uploadedFile.get("name").asText();
-		return url + "file?path=" + subDirectoryName + "/" + URLEncoder.encode(uploadedFileName, "UTF-8");
+		return url + "file?path=/Server/" + subDirectoryName + "/" + URLEncoder.encode(uploadedFileName, "UTF-8");
     }
 }
