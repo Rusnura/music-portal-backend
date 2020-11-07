@@ -44,19 +44,18 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ActiveProfiles("test")
 @Ignore
 public class SongController {
-  private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
+  private final MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
   private MockMvc mockMvc;
-  private User user1, user2;
   private Playlist rtu1Playlist1, rtu1Playlist2;
   private Playlist rtu2Playlist1, rtu2Playlist2;
   private Song rtu1Playlist1Song, rtu1Playlist2Song;
   private Song rtu2Playlist1Song, rtu2Playlist2Song;
-  private Principal principal1 = new UsernamePasswordAuthenticationToken("rtu1", "rtuPass1");
-  private Principal principal2 = new UsernamePasswordAuthenticationToken("rtu2", "rtuPass2");
-  private Principal nonExistPrincipal = new UsernamePasswordAuthenticationToken("non-existing", "p");
-  private File mp3correctFile = new File(SongController.class.getResource("/mp3/MP3_700KB.mp3").getFile());
-  private File mp3incorrectFile = new File(SongController.class.getResource("/mp3/wrong.mp3").getFile());
-  private File mp3emptyFile = new File(SongController.class.getResource("/mp3/empty.mp3").getFile());
+  private final Principal principal1 = new UsernamePasswordAuthenticationToken("rtu1", "rtuPass1");
+  private final Principal principal2 = new UsernamePasswordAuthenticationToken("rtu2", "rtuPass2");
+  private final Principal nonExistPrincipal = new UsernamePasswordAuthenticationToken("non-existing", "p");
+  private final File mp3correctFile = new File(SongController.class.getResource("/mp3/MP3_700KB.mp3").getFile());
+  private final File mp3incorrectFile = new File(SongController.class.getResource("/mp3/wrong.mp3").getFile());
+  private final File mp3emptyFile = new File(SongController.class.getResource("/mp3/empty.mp3").getFile());
   private static File tempFolder = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
 
   @Autowired
@@ -100,14 +99,14 @@ public class SongController {
     ReflectionTestUtils.setField(songService, "audioFilesDirectoryPath", tempFolder.getPath());
     ReflectionTestUtils.setField(songService, "audioFilesDirectory", tempFolder);
 
-    user1 = new User();
+    User user1 = new User();
     user1.setUsername("rtu1");
     user1.setPassword("rtuPass1");
     user1.setName("Rus");
     user1.setLastname("Tum");
     userRepo.save(user1);
 
-    user2 = new User();
+    User user2 = new User();
     user2.setUsername("rtu2");
     user2.setPassword("rtuPass2");
     user2.setName("Rus");

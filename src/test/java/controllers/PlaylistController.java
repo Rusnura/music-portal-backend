@@ -35,14 +35,14 @@ import java.security.Principal;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Runner.class)
 @ActiveProfiles("test")
 public class PlaylistController {
-  private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
+  private final MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
   private MockMvc mockMvc;
   private User user1, user2;
   private Playlist rtu1Playlist1, rtu1Playlist2;
   private Playlist rtu2Playlist1, rtu2Playlist2;
-  private Principal principal1 = new UsernamePasswordAuthenticationToken("rtu1", "rtuPass1");
-  private Principal principal2 = new UsernamePasswordAuthenticationToken("rtu2", "rtuPass2");
-  private Principal nonExistPrincipal = new UsernamePasswordAuthenticationToken("non-existing", "p");
+  private final Principal principal1 = new UsernamePasswordAuthenticationToken("rtu1", "rtuPass1");
+  private final Principal principal2 = new UsernamePasswordAuthenticationToken("rtu2", "rtuPass2");
+  private final Principal nonExistPrincipal = new UsernamePasswordAuthenticationToken("non-existing", "p");
 
   @Autowired
   private WebApplicationContext webApplicationContext;
