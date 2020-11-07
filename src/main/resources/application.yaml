@@ -11,7 +11,9 @@ spring:
 
 
 music:
-  dir: http://localhost:8080/FileService
+  storage:
+    type: file-service
+    uri: http://localhost:5000/file?password=qBw66B6RvanBj5CC64REzmBFu2ruY3b9fDe5XxFtts&path=/Server/
 
 server:
   jwt:
