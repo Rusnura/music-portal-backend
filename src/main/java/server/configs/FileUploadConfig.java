@@ -11,17 +11,17 @@ import javax.servlet.MultipartConfigElement;
 
 @Configuration
 public class FileUploadConfig {
-    @Value("${server.upload.max-file-size-mb}")
-    private String maxUploadFileSize;
+  @Value("${server.upload.max-file-size-mb}")
+  private String maxUploadFileSize;
 
-    @Value("${server.upload.max-request-size-mb}")
-    private String maxRequestSize;
+  @Value("${server.upload.max-request-size-mb}")
+  private String maxRequestSize;
 
-    @Bean
-    MultipartConfigElement multipartConfigElement() {
-        MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxFileSize(DataSize.of(Integer.parseInt(maxUploadFileSize), DataUnit.MEGABYTES));
-        factory.setMaxRequestSize(DataSize.of(Integer.parseInt(maxRequestSize), DataUnit.MEGABYTES));
-        return factory.createMultipartConfig();
-    }
+  @Bean
+  MultipartConfigElement multipartConfigElement() {
+    MultipartConfigFactory factory = new MultipartConfigFactory();
+    factory.setMaxFileSize(DataSize.of(Integer.parseInt(maxUploadFileSize), DataUnit.MEGABYTES));
+    factory.setMaxRequestSize(DataSize.of(Integer.parseInt(maxRequestSize), DataUnit.MEGABYTES));
+    return factory.createMultipartConfig();
+  }
 }

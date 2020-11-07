@@ -8,14 +8,14 @@ import server.repositories.UserRepository;
 
 @Service
 public class UserService extends AbstractService<User> {
-    @Autowired
-    private UserRepository userRepo;
+  @Autowired
+  private UserRepository userRepo;
 
-    public boolean isExistsByUsername(String username) {
-        return userRepo.existsByUsername(username);
-    }
+  public boolean isExistsByUsername(String username) {
+    return userRepo.existsByUsername(username);
+  }
 
-    public User findByUsername(String username) {
-        return userRepo.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User with username ='" + username + "' not found!"));
-    }
+  public User findByUsername(String username) {
+    return userRepo.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User with username ='" + username + "' not found!"));
+  }
 }

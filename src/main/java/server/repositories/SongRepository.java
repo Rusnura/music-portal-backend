@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface SongRepository extends JpaRepository<Song, String> {
-    Optional<Song> findByPlaylistAndId(Playlist playlist, String id);
-    Page<Song> findAllByPlaylist(Playlist playlist, Pageable pageable);
-    Page<Song> findAllByUser_Username(String username, Pageable pageable);
+  Optional<Song> findByPlaylistAndId(Playlist playlist, String id);
+  Page<Song> findAllByPlaylist(Playlist playlist, Pageable pageable);
+  Page<Song> findAllByUser_Username(String username, Pageable pageable);
 }

@@ -8,6 +8,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import server.interfaces.IFilesStorageWriter;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -15,50 +16,50 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RemoteURLFilesStorageWriter implements IFilesStorageWriter {
-    private static final Logger LOGGER = Logger.getLogger(RemoteURLFilesStorageWriter.class.getName());
-    private final URL remoteFileStorageUrl;
+  private static final Logger LOGGER = Logger.getLogger(RemoteURLFilesStorageWriter.class.getName());
+  private final URL remoteFileStorageUrl;
 
-    public RemoteURLFilesStorageWriter(URL remoteFileStorageUrl) {
-        this.remoteFileStorageUrl = remoteFileStorageUrl;
+  public RemoteURLFilesStorageWriter(URL remoteFileStorageUrl) {
+    this.remoteFileStorageUrl = remoteFileStorageUrl;
+  }
+
+  @Override
+  public String write(MultipartFile uploadedAudioFile, String subDirectoryName) throws IOException {
+    String url = remoteFileStorageUrl.toString();
+    if (!url.endsWith("/")) url += "/";
+    String requestURL = url + "file?path=/Server/" + subDirectoryName + "&createParentFolders=true";
+    LinkedMultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+    // Hack for uploading multipart file to another resource
+    ByteArrayResource contentsAsResource = new ByteArrayResource(uploadedAudioFile.getBytes()) {
+      @Override
+      public String getFilename() {
+        return uploadedAudioFile.getOriginalFilename();
+      }
+    };
+    params.add("file", contentsAsResource);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(params, headers);
+    ResponseEntity<JsonNode> response = new RestTemplate().exchange(requestURL, HttpMethod.POST, requestEntity, JsonNode.class);
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      LOGGER.log(Level.WARNING, "Can't upload file: " + uploadedAudioFile.getOriginalFilename() + "." +
+        "File service returns non-successfully response: " + response.getBody() + ", status = " + response.getStatusCode());
+      throw new IOException("Can't upload file! Response: " + response.getBody() + ", status = " + response.getStatusCode());
+    }
+    JsonNode uploadedFile = response.getBody();
+
+    if (uploadedFile == null) {
+      LOGGER.log(Level.WARNING, "File uploaded successfully, but response is null. " +
+        "File name: " + uploadedAudioFile.getOriginalFilename() + ", status = " + response.getStatusCode());
+      throw new IOException("File uploaded successfully, but response is null!");
     }
 
-    @Override
-    public String write(MultipartFile uploadedAudioFile, String subDirectoryName) throws IOException {
-    	String url = remoteFileStorageUrl.toString();
-    	if (!url.endsWith("/")) url += "/";
-    	String requestURL = url + "file?path=/Server/" + subDirectoryName + "&createParentFolders=true";
-		LinkedMultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-		// Hack for uploading multipart file to another resource
-		ByteArrayResource contentsAsResource = new ByteArrayResource(uploadedAudioFile.getBytes()) {
-			@Override
-			public String getFilename() {
-				return uploadedAudioFile.getOriginalFilename();
-			}
-		};
-		params.add("file", contentsAsResource);
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(params, headers);
-		ResponseEntity<JsonNode> response = new RestTemplate().exchange(requestURL, HttpMethod.POST, requestEntity, JsonNode.class);
-		if (!response.getStatusCode().is2xxSuccessful()) {
-			LOGGER.log(Level.WARNING, "Can't upload file: " + uploadedAudioFile.getOriginalFilename() + "." +
-				"File service returns non-successfully response: " + response.getBody() + ", status = " + response.getStatusCode());
-			throw new IOException("Can't upload file! Response: " + response.getBody() + ", status = " + response.getStatusCode());
-		}
-		JsonNode uploadedFile = response.getBody();
-
-		if (uploadedFile == null) {
-			LOGGER.log(Level.WARNING, "File uploaded successfully, but response is null. " +
-				"File name: " + uploadedAudioFile.getOriginalFilename() + ", status = " + response.getStatusCode());
-			throw new IOException("File uploaded successfully, but response is null!");
-		}
-
-		if (!uploadedFile.has("name")) {
-			LOGGER.log(Level.WARNING, "File uploaded successfully, expected `name` but `null`." +
-				"File name: " + uploadedAudioFile.getOriginalFilename() + ", status = " + response.getStatusCode());
-			throw new IOException("File uploaded successfully, expected `name` but `null`.");
-		}
-		String uploadedFileName = uploadedFile.get("name").asText();
-		return url + "file?path=/Server/" + subDirectoryName + "/" + URLEncoder.encode(uploadedFileName, "UTF-8");
+    if (!uploadedFile.has("name")) {
+      LOGGER.log(Level.WARNING, "File uploaded successfully, expected `name` but `null`." +
+        "File name: " + uploadedAudioFile.getOriginalFilename() + ", status = " + response.getStatusCode());
+      throw new IOException("File uploaded successfully, expected `name` but `null`.");
     }
+    String uploadedFileName = uploadedFile.get("name").asText();
+    return url + "file?path=/Server/" + subDirectoryName + "/" + URLEncoder.encode(uploadedFileName, "UTF-8");
+  }
 }

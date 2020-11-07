@@ -23,12 +23,14 @@ import server.repositories.PlaylistRepository;
 import server.repositories.SongRepository;
 import server.repositories.UserRepository;
 import server.services.SongService;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.UUID;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -83,7 +85,7 @@ public class SongController {
   }
 
   @AfterClass
-  public static void  tearDownAfterClass() throws Exception {
+  public static void tearDownAfterClass() throws Exception {
     if (tempFolder != null && tempFolder.exists()) {
       tempFolder.delete();
     }
@@ -145,10 +147,10 @@ public class SongController {
     song.setArtist("art1");
     song.setTitle("rtu1-playlist1-song");
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
-            .file(mp3File)
-            .content(convertObjectToJsonString(song)).contentType("multipart/form-data")
-            .principal(principal1))
-            .andExpect(status().isOk()).andReturn();
+      .file(mp3File)
+      .content(convertObjectToJsonString(song)).contentType("multipart/form-data")
+      .principal(principal1))
+      .andExpect(status().isOk()).andReturn();
     rtu1Playlist1Song = objectMapper.readValue(result.getResponse().getContentAsString(), Song.class);
 
 //    result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist2.getId())
@@ -181,66 +183,66 @@ public class SongController {
   public void createSongTest() throws Exception {
     MockMultipartFile mp3File = new MockMultipartFile("audio", "mp3.mp3", "audio/mp3", new FileInputStream(mp3correctFile));
     mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
-            .file(mp3File)
-            .principal(principal1)
-            .param("artist", "art1")
-            .param("title", "song1"))
-            .andExpect(status().isOk());
+      .file(mp3File)
+      .principal(principal1)
+      .param("artist", "art1")
+      .param("title", "song1"))
+      .andExpect(status().isOk());
 
     mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist2.getId())
-            .file(mp3File)
-            .principal(principal1)
-            .param("artist", "art2")
-            .param("title", "song2"))
-            .andExpect(status().isOk());
+      .file(mp3File)
+      .principal(principal1)
+      .param("artist", "art2")
+      .param("title", "song2"))
+      .andExpect(status().isOk());
 
     mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu2Playlist1.getId())
-            .file(mp3File)
-            .principal(principal2)
-            .param("artist", "art2")
-            .param("title", "song2"))
-            .andExpect(status().isOk());
+      .file(mp3File)
+      .principal(principal2)
+      .param("artist", "art2")
+      .param("title", "song2"))
+      .andExpect(status().isOk());
 
     mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu2Playlist2.getId())
-            .file(mp3File)
-            .principal(principal2)
-            .param("artist", "art2")
-            .param("title", "song2"))
-            .andExpect(status().isOk());
+      .file(mp3File)
+      .principal(principal2)
+      .param("artist", "art2")
+      .param("title", "song2"))
+      .andExpect(status().isOk());
 
     // Try to upload to another user playlist
     mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
-            .file(mp3File)
-            .principal(principal2)
-            .param("artist", "art2")
-            .param("title", "song2"))
-            .andExpect(status().isNotFound());
+      .file(mp3File)
+      .principal(principal2)
+      .param("artist", "art2")
+      .param("title", "song2"))
+      .andExpect(status().isNotFound());
 
     // Try to upload empty file
     mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
-            //.file(mp3File)
-            .principal(principal2)
-            .param("artist", "art2")
-            .param("title", "song2"))
-            .andExpect(status().isBadRequest());
+      //.file(mp3File)
+      .principal(principal2)
+      .param("artist", "art2")
+      .param("title", "song2"))
+      .andExpect(status().isBadRequest());
 
     // Try to upload a wrong file
     MockMultipartFile incorrectMp3File = new MockMultipartFile("audio", "wrong.mp3", "image/jpg", new FileInputStream(mp3incorrectFile));
     mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
-            .file(incorrectMp3File)
-            .principal(principal1)
-            .param("artist", "art2")
-            .param("title", "song2"))
-            .andExpect(status().isNotAcceptable());
+      .file(incorrectMp3File)
+      .principal(principal1)
+      .param("artist", "art2")
+      .param("title", "song2"))
+      .andExpect(status().isNotAcceptable());
 
     // Try to upload a empty file (with correct headers)
     MockMultipartFile emptyMp3File = new MockMultipartFile("audio", "empty.mp3", "audio/mp3", new FileInputStream(mp3emptyFile));
     mockMvc.perform(MockMvcRequestBuilders.multipart("/api/playlist/{playlistId}/song", rtu1Playlist1.getId())
-            .file(emptyMp3File)
-            .principal(principal1)
-            .param("artist", "art2")
-            .param("title", "song2"))
-            .andExpect(status().isNotAcceptable());
+      .file(emptyMp3File)
+      .principal(principal1)
+      .param("artist", "art2")
+      .param("title", "song2"))
+      .andExpect(status().isNotAcceptable());
   }
 
   // @PutMapping(value = "/api/playlist/{playlistId}/song/{id}") // U
@@ -248,89 +250,89 @@ public class SongController {
   @Test
   public void getSongs() throws Exception {
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isOk());
+      .principal(principal1))
+      .andExpect(status().isOk());
 
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isOk());
+      .principal(principal1))
+      .andExpect(status().isOk());
 
     // Try to get song from public playlist from another user
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType)
-            .principal(principal2))
-            .andExpect(status().isOk());
+      .principal(principal2))
+      .andExpect(status().isOk());
 
     // Try to get song from public playlist from another user
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType)
-            .principal(principal2))
-            .andExpect(status().isNotFound());
+      .principal(principal2))
+      .andExpect(status().isNotFound());
 
     // Try to get non-existing song from public playlist from owner user
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isNotFound());
+      .principal(principal1))
+      .andExpect(status().isNotFound());
 
     // Try to get non-existing song from public playlist from another user
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType)
-            .principal(principal2))
-            .andExpect(status().isNotFound());
+      .principal(principal2))
+      .andExpect(status().isNotFound());
   }
 
   @Test
   public void getMP3File() throws Exception {
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isOk());
+      .principal(principal1))
+      .andExpect(status().isOk());
 
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isOk());
+      .principal(principal1))
+      .andExpect(status().isOk());
 
     // Try to get song from public playlist from another user
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType)
-            .principal(principal2))
-            .andExpect(status().isOk());
+      .principal(principal2))
+      .andExpect(status().isOk());
 
     // Try to get song from public playlist from another user
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType)
-            .principal(principal2))
-            .andExpect(status().isNotFound());
+      .principal(principal2))
+      .andExpect(status().isNotFound());
 
     // Try to get non-existing song from public playlist from owner user
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isNotFound());
+      .principal(principal1))
+      .andExpect(status().isNotFound());
 
     // Try to get non-existing song from public playlist from another user
     mockMvc.perform(get("/api/playlist/{playlistId}/song/{id}/mp3", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType)
-            .principal(principal2))
-            .andExpect(status().isNotFound());
+      .principal(principal2))
+      .andExpect(status().isNotFound());
   }
 
   @Test
   public void getPlaylistSongs() throws Exception {
     // Try to get playlist's song from public playlist by owner
     mockMvc.perform(get("/api/playlist/{playlistId}/songs", rtu1Playlist1.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content", hasSize(1)));
+      .principal(principal1))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.content", hasSize(1)));
 
     // Try to get playlist's song from private playlist by owner
     mockMvc.perform(get("/api/playlist/{playlistId}/songs", rtu1Playlist2.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content", hasSize(1)));
+      .principal(principal1))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.content", hasSize(1)));
 
     // Try to get playlist's song from public playlist by another user
     mockMvc.perform(get("/api/playlist/{playlistId}/songs", rtu2Playlist1.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content", hasSize(1)));
+      .principal(principal1))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.content", hasSize(1)));
 
     // Try to get playlist's song from private playlist by another user
     mockMvc.perform(get("/api/playlist/{playlistId}/songs", rtu2Playlist2.getId()).contentType(contentType)
-            .principal(principal1))
-            .andExpect(status().isNotFound());
+      .principal(principal1))
+      .andExpect(status().isNotFound());
   }
 
   @Test
@@ -342,11 +344,11 @@ public class SongController {
     song.setTitle("rtu1-playlist1-song-edited");
 
     mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType).principal(principal1)
-            .content(convertObjectToJsonString(song)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is(rtu1Playlist1Song.getId())))
-            .andExpect(jsonPath("$.title", is(song.getTitle())))
-            .andExpect(jsonPath("$.artist", is(song.getArtist())));
+      .content(convertObjectToJsonString(song)))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.id", is(rtu1Playlist1Song.getId())))
+      .andExpect(jsonPath("$.title", is(song.getTitle())))
+      .andExpect(jsonPath("$.artist", is(song.getArtist())));
 
     // Try to change song from private playlist by song owner
     song = new Song();
@@ -354,11 +356,11 @@ public class SongController {
     song.setArtist("art1-edited");
     song.setTitle("rtu1-playlist2-song-edited");
     mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType).principal(principal1)
-            .content(convertObjectToJsonString(song)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is(rtu1Playlist2Song.getId())))
-            .andExpect(jsonPath("$.title", is(song.getTitle())))
-            .andExpect(jsonPath("$.artist", is(song.getArtist())));
+      .content(convertObjectToJsonString(song)))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.id", is(rtu1Playlist2Song.getId())))
+      .andExpect(jsonPath("$.title", is(song.getTitle())))
+      .andExpect(jsonPath("$.artist", is(song.getArtist())));
 
 
     // Try to change song from public playlist by another user
@@ -368,8 +370,8 @@ public class SongController {
     song.setTitle("rtu2-playlist1-song-edited");
 
     mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu1Playlist1Song.getId()).contentType(contentType).principal(principal2)
-            .content(convertObjectToJsonString(song)))
-            .andExpect(status().isNotFound());
+      .content(convertObjectToJsonString(song)))
+      .andExpect(status().isNotFound());
 
     // Try to change song from private playlist by another user
     song = new Song();
@@ -377,8 +379,8 @@ public class SongController {
     song.setArtist("art1-edited");
     song.setTitle("rtu2-playlist2-song-edited");
     mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist2.getId(), rtu1Playlist2Song.getId()).contentType(contentType).principal(principal2)
-            .content(convertObjectToJsonString(song)))
-            .andExpect(status().isNotFound());
+      .content(convertObjectToJsonString(song)))
+      .andExpect(status().isNotFound());
 
     // Try to change song from another playlist
     song = new Song();
@@ -386,8 +388,8 @@ public class SongController {
     song.setArtist("art1-edited");
     song.setTitle("rtu2-playlist2-song-edited");
     mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu1Playlist1.getId(), rtu2Playlist1Song.getId()).contentType(contentType).principal(principal2)
-            .content(convertObjectToJsonString(song)))
-            .andExpect(status().isNotFound());
+      .content(convertObjectToJsonString(song)))
+      .andExpect(status().isNotFound());
 
     // Try to change song to bad id
     song = new Song();
@@ -395,11 +397,11 @@ public class SongController {
     song.setArtist("art1-edited");
     song.setTitle("rtu2-playlist2-song-edited");
     mockMvc.perform(put("/api/playlist/{playlistId}/song/{id}", rtu2Playlist2.getId(), rtu2Playlist2Song.getId()).contentType(contentType).principal(principal2)
-            .content(convertObjectToJsonString(song)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is(rtu2Playlist2Song.getId())))
-            .andExpect(jsonPath("$.title", is(song.getTitle())))
-            .andExpect(jsonPath("$.artist", is(song.getArtist())));
+      .content(convertObjectToJsonString(song)))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.id", is(rtu2Playlist2Song.getId())))
+      .andExpect(jsonPath("$.title", is(song.getTitle())))
+      .andExpect(jsonPath("$.artist", is(song.getArtist())));
   }
 
   @Test

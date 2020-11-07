@@ -7,11 +7,11 @@ import server.services.UserService;
 
 @RestController
 public class UserController {
-    @Autowired
-    private UserService userService;
+  @Autowired
+  private UserService userService;
 
-    @PostMapping("/api/user/register")
-    public void register() { // TODO: Release this
+  @PostMapping("/api/user/register")
+  public void register() { // TODO: Release this
 
-    }
+  }
 }
