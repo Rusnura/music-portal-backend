@@ -1,7 +1,7 @@
-package server.interfaces.impls;
+package server.storage.impls;
 
 import org.apache.commons.io.IOUtils;
-import server.interfaces.IFileStorageReader;
+import server.storage.IFileStorageReader;
 
 import java.io.IOException;
 import java.net.URL;

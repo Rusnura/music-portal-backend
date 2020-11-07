@@ -1,4 +1,4 @@
-package server.interfaces;
+package server.storage;
 
 import java.io.IOException;
 

@@ -1,6 +1,6 @@
-package server.interfaces.impls;
+package server.storage.impls;
 
-import server.interfaces.IFileStorageReader;
+import server.storage.IFileStorageReader;
 
 import java.io.File;
 import java.io.IOException;

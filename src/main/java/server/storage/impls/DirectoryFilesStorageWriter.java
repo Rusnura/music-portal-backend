@@ -1,9 +1,8 @@
-package server.interfaces.impls;
+package server.storage.impls;
 
 import org.springframework.web.multipart.MultipartFile;
 import server.exceptions.IncorrectAudioException;
-import server.interfaces.IFilesStorageWriter;
-
+import server.storage.IFilesStorageWriter;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,4 +1,4 @@
-package server.interfaces.impls;
+package server.storage.impls;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.core.io.ByteArrayResource;
@@ -6,8 +6,7 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import server.interfaces.IFilesStorageWriter;
-
+import server.storage.IFilesStorageWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
