@@ -1,10 +1,7 @@
 package server.storage;
 
 import org.springframework.util.StringUtils;
-import server.storage.impls.DirectoryFilesStorageReader;
-import server.storage.impls.DirectoryFilesStorageWriter;
-import server.storage.impls.RemoteURLFileStorageReader;
-import server.storage.impls.RemoteURLFilesStorageWriter;
+import server.storage.impls.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,20 +25,26 @@ public class FileStorageFactory {
       break;
 
       case "file-service":
-
+        try {
+          return new FileServiceFilesStorageWriter(new URL(path));
+        } catch (MalformedURLException e) {
+          LOGGER.warning("Cannot register URL FileStorageWriter. Error: " + e);
+        }
       break;
 
-      default:
+      case "local":
         try {
           File storageDirectory = new File(path);
-          if (!storageDirectory.exists() || !storageDirectory.canWrite()) {
+          if (!storageDirectory.exists() || !storageDirectory.canWrite())
             throw new IllegalArgumentException("Please, check that directory: " + path + " readable and writable!");
-          }
-
           return new DirectoryFilesStorageWriter(storageDirectory);
         } catch (IllegalArgumentException e) {
           LOGGER.warning("Cannot register local FileStorageWriter. Error: " + e);
         }
+      break;
+
+      default:
+        LOGGER.warning("Cannot recognize file storage type.");
       break;
     }
     return null;
