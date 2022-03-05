@@ -35,7 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers("/api/authenticate", "/api/register").permitAll()
       .anyRequest().authenticated()
       .and()
-      .exceptionHandling().authenticationEntryPoint((req, res, ex) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+      .exceptionHandling()
+      .authenticationEntryPoint((req, res, ex) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
 
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
