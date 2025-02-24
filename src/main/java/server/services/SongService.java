@@ -22,7 +22,7 @@ import server.storage.IFilesStorageWriter;
 import server.models.Playlist;
 import server.models.Song;
 import server.repositories.SongRepository;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,7 +60,7 @@ public class SongService extends AbstractService<Song> {
   }
 
   public Song save(MultipartFile audioFile, Playlist playlist, String title, String artist) throws IllegalStateException, IOException {
-    if (audioFile.isEmpty() || StringUtils.isEmpty(audioFile.getOriginalFilename()))
+    if (audioFile.isEmpty() || StringUtils.hasText(audioFile.getOriginalFilename()))
       throw new IncorrectAudioException("Uploading file is empty!");
 
     if (!MP3_CONTENT_TYPE.equals(audioFile.getContentType()) &&
@@ -70,22 +70,22 @@ public class SongService extends AbstractService<Song> {
     Song song = new Song();
     song.setPlaylist(playlist);
     String uploadedFile = filesStorage.write(audioFile, playlist.getId());
-    if (StringUtils.isEmpty(artist) || StringUtils.isEmpty(title)) {
+    if (StringUtils.hasText(artist) || StringUtils.hasText(title)) {
       try {
         BodyContentHandler handler = new BodyContentHandler();
         Metadata metadata = new Metadata();
         ParseContext parseContext = new ParseContext();
         Mp3Parser Mp3Parser = new Mp3Parser();
         Mp3Parser.parse(audioFile.getInputStream(), handler, metadata, parseContext);
-        artist = StringUtils.isEmpty(artist) ? metadata.get("creator") : artist;
-        title = StringUtils.isEmpty(title) ? metadata.get("title") : title;
+        artist = StringUtils.hasText(artist) ? metadata.get("creator") : artist;
+        title = StringUtils.hasText(title) ? metadata.get("title") : title;
       } catch (SAXException | TikaException e) {
         LOGGER.log(Level.WARNING, "Cannot to get mp3 tags! Skipping...");
       }
     }
     song.setUser(playlist.getUser());
-    song.setArtist((StringUtils.isEmpty(artist) ? "Unknown" : artist));
-    song.setTitle((StringUtils.isEmpty(title) ? "Unknown" : title));
+    song.setArtist((StringUtils.hasText(artist) ? "Unknown" : artist));
+    song.setTitle((StringUtils.hasText(title) ? "Unknown" : title));
     song.setPath(uploadedFile);
     return save(song);
   }
@@ -97,7 +97,7 @@ public class SongService extends AbstractService<Song> {
   public ByteArrayResource getMP3File(Song requestingSong) throws IOException {
     String path = requestingSong.getPath();
     LOGGER.info("*** Starting fetching a song: '" + requestingSong + "' ***");
-    if (StringUtils.isEmpty(path)) {
+    if (StringUtils.hasText(path)) {
       throw new IllegalArgumentException("Songs path was not found!");
     }
     IFileStorageReader fileReader = FileStorageFactory.getFileReader(path);

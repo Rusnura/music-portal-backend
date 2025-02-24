@@ -16,10 +16,9 @@ import server.models.Playlist;
 import server.models.Song;
 import server.services.PlaylistService;
 import server.services.SongService;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.logging.Logger;

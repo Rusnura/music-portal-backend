@@ -1,28 +1,40 @@
 plugins {
-  id 'org.springframework.boot' version '2.6.4'
-  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'java'
+  id("java")
+  id("org.springframework.boot") version "3.4.3"
+  id("io.spring.dependency-management") version "1.1.7"
   id 'war'
 }
 
-group 'org.tumasov'
+group 'ru.tumasoff'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 11
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
+}
 
 repositories {
   mavenCentral()
 }
 
 dependencies {
-  compile 'org.apache.tika:tika-core:1.23'
-  compile 'org.apache.tika:tika-parsers:1.23'
-  compile group: 'org.postgresql', name: 'postgresql', version: '42.2.14'
-  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-  implementation 'org.springframework.boot:spring-boot-starter-security'
-  implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation 'io.jsonwebtoken:jjwt:0.9.1'
-  providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-  testImplementation 'org.springframework.boot:spring-boot-starter-test'
-  testImplementation 'org.springframework.security:spring-security-test'
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.boot:spring-boot-starter-web")
+  runtimeOnly("org.postgresql:postgresql")
+
+  // Tika
+  implementation 'org.apache.tika:tika-core:3.1.0'
+  implementation 'org.apache.tika:tika-parser-audiovideo-module:3.1.0'
+
+  // JWT
+  implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+
+  // Jakarta validation
+  implementation 'org.hibernate.validator:hibernate-validator:8.0.2.Final'
+
+  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.security:spring-security-test")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

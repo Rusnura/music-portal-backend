@@ -6,14 +6,16 @@ import org.springframework.web.multipart.MultipartFile;
 import server.helpers.HttpUtils;
 import server.storage.IFilesStorageWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class RemoteURLFilesStorageWriter implements IFilesStorageWriter {
-  private final URL remoteFileStorageUrl;
+  private final URI remoteFileStorageUrl;
 
-  public RemoteURLFilesStorageWriter(URL remoteFileStorageUrl) {
+  public RemoteURLFilesStorageWriter(URI remoteFileStorageUrl) {
     this.remoteFileStorageUrl = remoteFileStorageUrl;
   }
 
@@ -22,6 +24,6 @@ public class RemoteURLFilesStorageWriter implements IFilesStorageWriter {
     String url = remoteFileStorageUrl.toString();
     if (!url.endsWith("/")) url += "/";
     HttpUtils.uploadFile(url, HttpMethod.POST, uploadedAudioFile, JsonNode.class);
-    return url + URLEncoder.encode(Objects.requireNonNull(uploadedAudioFile.getOriginalFilename()), "UTF-8");
+    return url + URLEncoder.encode(Objects.requireNonNull(uploadedAudioFile.getOriginalFilename()), StandardCharsets.UTF_8);
   }
 }

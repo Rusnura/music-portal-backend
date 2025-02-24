@@ -47,10 +47,10 @@ public class AuthController {
 
   @PostMapping("/api/register")
   public ResponseEntity<?> register(@RequestBody User user) {
-    if (StringUtils.isEmpty(user.getUsername()) ||
-      StringUtils.isEmpty(user.getPassword()) ||
-      StringUtils.isEmpty(user.getName()) ||
-      StringUtils.isEmpty(user.getLastname())) {
+    if (StringUtils.hasText(user.getUsername()) ||
+      StringUtils.hasText(user.getPassword()) ||
+      StringUtils.hasText(user.getName()) ||
+      StringUtils.hasText(user.getLastname())) {
       return ResponseEntity.badRequest().build();
     }
 

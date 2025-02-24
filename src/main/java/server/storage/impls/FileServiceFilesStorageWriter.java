@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import server.helpers.HttpUtils;
 import server.storage.IFilesStorageWriter;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -14,9 +14,9 @@ import java.util.logging.Logger;
 
 public class FileServiceFilesStorageWriter implements IFilesStorageWriter {
   private static final Logger LOGGER = Logger.getLogger(FileServiceFilesStorageWriter.class.getName());
-  private final URL remoteFileStorageUrl;
+  private final URI remoteFileStorageUrl;
 
-  public FileServiceFilesStorageWriter(URL remoteFileStorageUrl) {
+  public FileServiceFilesStorageWriter(URI remoteFileStorageUrl) {
     this.remoteFileStorageUrl = remoteFileStorageUrl;
   }
 

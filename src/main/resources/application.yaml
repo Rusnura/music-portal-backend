@@ -1,18 +1,6 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/musicx
-    username: postgres
-    password: postgres
-  jpa:
-    properties.hibernate.temp.use_jdbc_metadata_defaults: false
-    hibernate:
-      show_sql: true
-      ddl-auto: validate
-
-
 music:
   storage:
-    type: file-service
+    type: local
     uri: http://localhost:5000/file?password=qBw66B6RvanBj5CC64REzmBFu2ruY3b9fDe5XxFtts&path=/Server/
 
 server:
@@ -23,11 +11,25 @@ server:
     max-file-size-mb: 150
     max-request-size-mb: 150
 
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:55432/musicx
+    username: admin
+    password: admin
+    hibernate:
+      show_sql: true
+      ddl-auto: validate
+  hibernate:
+      ddl-auto: create-drop
+
 ---
 spring:
-  profiles: test
+  config:
+    activate:
+      on-profile: test
   datasource:
-    driverClassName: org.h2.Driver
+    driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:music-portal-test
     username: sa
     password:

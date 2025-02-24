@@ -3,8 +3,7 @@ package server.storage;
 import org.springframework.util.StringUtils;
 import server.storage.impls.*;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.logging.Logger;
 
 public class FileStorageFactory {
@@ -12,25 +11,15 @@ public class FileStorageFactory {
 
   public static IFilesStorageWriter getFileWriter(String type, String path) {
     LOGGER.info("Try to register " + type + "[" + path + "] storage!");
-    if (StringUtils.isEmpty(type))
+    if (!StringUtils.hasText(type))
       return null;
 
     switch (type.toLowerCase()) {
       case "url":
-        try {
-          return new RemoteURLFilesStorageWriter(new URL(path));
-        } catch (MalformedURLException e) {
-          LOGGER.warning("Cannot register URL FileStorageWriter. Error: " + e);
-        }
-      break;
+          return new RemoteURLFilesStorageWriter(URI.create(path));
 
       case "file-service":
-        try {
-          return new FileServiceFilesStorageWriter(new URL(path));
-        } catch (MalformedURLException e) {
-          LOGGER.warning("Cannot register URL FileStorageWriter. Error: " + e);
-        }
-      break;
+          return new FileServiceFilesStorageWriter(URI.create(path));
 
       case "local":
         try {

@@ -16,6 +16,7 @@ import java.util.function.Function;
 public class JwtHelper {
   @Value("${server.jwt.validity-mins}")
   private String jwtTokenValidity;
+
   @Value("${server.jwt.secret}")
   private String secret;
 
@@ -52,6 +53,10 @@ public class JwtHelper {
   }
 
   private Claims getAllClaimsFromToken(String token) {
-    return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    return Jwts.parser()
+      .setSigningKey(secret)
+      .build()
+      .parseClaimsJws(token)
+      .getBody();
   }
 }

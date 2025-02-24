@@ -29,7 +29,7 @@ public class PlaylistController {
   @PostMapping("/api/playlist") // C
   public ResponseEntity<Playlist> create(@RequestBody Playlist playlist, Authentication authentication) {
     User user = userService.findByUsername(authentication.getName());
-    if (StringUtils.isEmpty(playlist.getName())) {
+    if (StringUtils.hasText(playlist.getName())) {
       throw new IllegalStateException("Playlist name is empty");
     }
     Playlist newPlaylist = new Playlist();
